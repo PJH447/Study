@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Set;
 
@@ -54,4 +55,32 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    public String getEmail() {
+        if (ObjectUtils.isEmpty(this.email)) {
+            return "";
+        }
+        return email;
+    }
+
+    public String getName() {
+        if (ObjectUtils.isEmpty(this.name)) {
+            return "";
+        }
+        return name;
+    }
+
+    public String getNickname() {
+        if (ObjectUtils.isEmpty(this.nickname)) {
+            return "";
+        }
+        return nickname;
+    }
+
+    public String getPhone() {
+        if (ObjectUtils.isEmpty(this.phone)) {
+            return "";
+        }
+
+        return phone;
+    }
 }
