@@ -47,7 +47,8 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
 //            .rememberMe((rememberMe) -> rememberMe.rememberMeServices(rememberMeServices()))
 
-            .exceptionHandling((handling) -> handling.accessDeniedHandler(accessDeniedHandler))
+            .exceptionHandling((handling) -> handling.authenticationEntryPoint(jwtEntryPoint)
+                                                     .accessDeniedHandler(accessDeniedHandler))
             .addFilterBefore(characterEncodingFilter, CsrfFilter.class)
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .securityContext((securityContext) -> {
