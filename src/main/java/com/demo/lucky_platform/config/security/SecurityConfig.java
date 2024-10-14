@@ -1,6 +1,5 @@
 package com.demo.lucky_platform.config.security;
 
-import com.demo.lucky_platform.web.user.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
@@ -31,15 +31,16 @@ public class SecurityConfig {
     private final DataSource dataSource;
     private final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((auth) ->
-                            auth.requestMatchers("/badge/**").permitAll()
-                                .requestMatchers("/images/**", "/favicon.ico").permitAll()
+                    auth.requestMatchers("/badge/**").permitAll()
+                        .requestMatchers("/images/**", "/favicon.ico").permitAll()
 
-                                .requestMatchers("/**").permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated()
             )
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                                                    .maximumSessions(1)
@@ -52,6 +53,7 @@ public class SecurityConfig {
 
             .exceptionHandling((handling) -> handling.accessDeniedHandler(accessDeniedHandler))
             .addFilterBefore(characterEncodingFilter, CsrfFilter.class)
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .securityContext((securityContext) -> {
                         securityContext.securityContextRepository(delegatingSecurityContextRepository());
                         securityContext.requireExplicitSave(true);
