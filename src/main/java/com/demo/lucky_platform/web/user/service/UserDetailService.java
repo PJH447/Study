@@ -26,7 +26,7 @@ public class UserDetailService implements UserDetailsService {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
 
-        User user = userRepository.findByEmailAAndEnabledIsTrue(email)
+        User user = userRepository.findByEmailAndEnabledIsTrue(email)
                                   .orElseThrow(() -> new UsernameNotFoundException("No user found with email: " + email));
 
         AuthenticatedUser authenticatedUser = new AuthenticatedUser(user);
