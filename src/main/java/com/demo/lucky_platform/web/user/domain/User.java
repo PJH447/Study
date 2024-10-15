@@ -93,4 +93,8 @@ public class User extends BaseEntity {
     public void initRole(Role role) {
         this.roles = new HashSet<>(Collections.singletonList(role));
     }
+
+    public void editNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

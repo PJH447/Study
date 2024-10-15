@@ -1,9 +1,12 @@
 package com.demo.lucky_platform.web.user.controller;
 
+import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
+import com.demo.lucky_platform.web.user.dto.EditInfoForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
 import com.demo.lucky_platform.web.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +20,13 @@ public class UserRestController {
     @PostMapping("/v1/sign-up")
     public String signUp(@RequestBody SignUpForm signUpForm) {
         userService.signUp(signUpForm);
+        return "success";
+    }
+
+    @PostMapping("/v1/edit")
+    public String editUserInfo(@AuthenticationPrincipal AuthenticatedUser user, @RequestBody EditInfoForm editInfoForm) {
+        userService.editNickname(user.getId(), editInfoForm.nickname());
+
         return "success";
     }
 }

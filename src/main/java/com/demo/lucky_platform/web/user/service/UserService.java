@@ -5,4 +5,6 @@ import com.demo.lucky_platform.web.user.dto.SignUpForm;
 public interface UserService {
 
     void signUp(SignUpForm signUpForm);
+
+    void editNickname(Long userId, String nickname);
 }

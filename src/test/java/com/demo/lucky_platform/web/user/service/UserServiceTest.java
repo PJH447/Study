@@ -178,4 +178,53 @@ class UserServiceTest {
             assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
         }
     }
+
+    @Nested
+    @DisplayName("닉네임 변경 테스트")
+    class EditNicknameTest {
+
+        @Test
+        @DisplayName("")
+        void 성공() {
+
+            //given
+            doReturn(Optional.empty()).when(userRepository).findByNicknameAndEnabledIsTrue(any());
+            doReturn(Optional.ofNullable(user)).when(userRepository).findById(any());
+
+            //when
+            userService.editNickname(1L, "newNickname");
+
+            //then
+            verify(user, times(1)).editNickname(any());
+            verify(userRepository, times(1)).save(any());
+        }
+
+        @Test
+        @DisplayName("이미 동일 닉네임 유저가 존재")
+        void 실패1() {
+
+            //given
+
+            //when
+            doReturn(Optional.ofNullable(user)).when(userRepository).findByNicknameAndEnabledIsTrue(any());
+
+            //then
+            assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
+        }
+
+        @Test
+        @DisplayName("바꾸고자하는 대상이 존재하지 않음")
+        void 실패2() {
+
+            //given
+            doReturn(Optional.empty()).when(userRepository).findByNicknameAndEnabledIsTrue(any());
+
+            //when
+            doReturn(Optional.empty()).when(userRepository).findById(any());
+
+            //then
+            assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
+        }
+
+    }
 }

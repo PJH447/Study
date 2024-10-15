@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final IamportClient iamportClient;
 
     @Transactional
+    @Override
     public void signUp(SignUpForm signUpForm) {
         User user = User.builder()
                         .email(signUpForm.email())
@@ -47,6 +48,20 @@ public class UserServiceImpl implements UserService {
 
         User _user = userRepository.save(user);
         this.phoneCertificate(_user, signUpForm.impUid());
+    }
+
+    @Transactional
+    @Override
+    public void editNickname(Long userId, String nickname) {
+        Optional<User> userByNickname = userRepository.findByNicknameAndEnabledIsTrue(nickname);
+        if (userByNickname.isPresent()) {
+            throw new RuntimeException("동일 닉네임 유저가 존재합니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(RuntimeException::new);
+        user.editNickname(nickname);
+        userRepository.save(user);
     }
 
     private Map<String, String> phoneCertificate(User user, String impUid) {
