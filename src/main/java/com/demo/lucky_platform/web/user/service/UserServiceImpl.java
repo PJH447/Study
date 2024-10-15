@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void editPassword(Long userId, EditPasswordForm editPasswordForm) {
         User user = getUser(userId);
