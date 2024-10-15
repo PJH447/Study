@@ -25,7 +25,6 @@ public class AuthenticatedUser implements UserDetails {
     private String name;
     private String nickname;
     private String email;
-    @JsonIgnore private String birthday;
     @JsonIgnore private String picture;
     @JsonIgnore private String password;
     private String phone;
@@ -39,7 +38,6 @@ public class AuthenticatedUser implements UserDetails {
         this.name = user.getName();
         this.nickname = user.getNickname();
         this.email = user.getEmail();
-        this.birthday = user.getBirthday();
         this.picture = user.getPicture();
         this.password = user.getPassword();
         this.phone = user.getPhone();

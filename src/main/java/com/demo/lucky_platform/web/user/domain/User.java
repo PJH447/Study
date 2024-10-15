@@ -4,6 +4,9 @@ import com.demo.lucky_platform.web.common.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
@@ -11,7 +14,7 @@ import java.util.Set;
 
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Data(staticConstructor = "of")
+@Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
@@ -25,17 +28,17 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Email
     @Column(name = "email", columnDefinition = "varchar(255)", nullable = false)
     private String email;
 
+    @Size(min = 2)
     @Column(name = "name", columnDefinition = "varchar(16)")
     private String name;
 
+    @Size(min = 2)
     @Column(name = "nickname", columnDefinition = "varchar(16)")
     private String nickname;
-
-    @Column(name = "birthday", columnDefinition = "varchar(50)")
-    private String birthday;
 
     @Column(name = "picture", columnDefinition = "varchar(255)")
     private String picture;
@@ -44,6 +47,7 @@ public class User extends BaseEntity {
     @Column(name = "password", columnDefinition = "varchar(255)")
     private String password;
 
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "휴대폰 번호 양식에 맞지 않습니다.")
     @Column(name = "phone", columnDefinition = "varchar(15)")
     private String phone;
 
