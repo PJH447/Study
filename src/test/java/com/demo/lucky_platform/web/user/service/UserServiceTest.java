@@ -1,5 +1,6 @@
 package com.demo.lucky_platform.web.user.service;
 
+import com.demo.lucky_platform.web.user.domain.PhoneCertification;
 import com.demo.lucky_platform.web.user.domain.Role;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
@@ -59,6 +60,8 @@ class UserServiceTest {
     Certification certification;
     @Mock
     IamportResponseException iamportResponseException;
+    @Mock
+    PhoneCertification phoneCertification;
 
     @Nested
     @DisplayName("회원가입 테스트")
@@ -151,6 +154,25 @@ class UserServiceTest {
 
             //when
             doReturn("impUid2").when(certification).getImpUid();
+
+            //then
+            assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
+        }
+
+        @Test
+        @DisplayName("exist certification log")
+        void 실패4() throws IamportResponseException, IOException {
+
+            //given
+            doReturn(user).when(userRepository).save(any());
+            doReturn(role).when(roleRepository).findByAuthority(any());
+            doReturn(iamportResponse).when(iamportClient).certificationByImpUid(any());
+            doReturn(certification).when(iamportResponse).getResponse();
+            doReturn(impUid).when(certification).getImpUid();
+            doReturn("uniqueKey").when(certification).getUniqueKey();
+
+            //when
+            doReturn(Optional.ofNullable(phoneCertification)).when(phoneCertificationRepository).findByUniqueKeyAndEnabledIsTrue(any());
 
             //then
             assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
