@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -86,5 +88,9 @@ public class User extends BaseEntity {
         }
 
         return phone;
+    }
+
+    public void initRole(Role role) {
+        this.roles = new HashSet<>(Collections.singletonList(role));
     }
 }

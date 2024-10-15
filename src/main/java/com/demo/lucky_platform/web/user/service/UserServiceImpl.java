@@ -42,15 +42,11 @@ public class UserServiceImpl implements UserService {
                         .password(bCryptPasswordEncoder.encode(signUpForm.password()))
                         .build();
 
-        this.setUserRole(user);
+        Role role = roleRepository.findByAuthority("USER");
+        user.initRole(role);
 
         User _user = userRepository.save(user);
         this.phoneCertificate(_user, signUpForm.impUid());
-    }
-
-    private void setUserRole(User user) {
-        Role role = roleRepository.findByAuthority("USER");
-        user.setRoles(new HashSet<>(Collections.singletonList(role)));
     }
 
     private Map<String, String> phoneCertificate(User user, String impUid) {
