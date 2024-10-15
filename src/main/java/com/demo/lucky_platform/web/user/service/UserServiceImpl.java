@@ -3,6 +3,7 @@ package com.demo.lucky_platform.web.user.service;
 import com.demo.lucky_platform.web.user.domain.PhoneCertification;
 import com.demo.lucky_platform.web.user.domain.Role;
 import com.demo.lucky_platform.web.user.domain.User;
+import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
 import com.demo.lucky_platform.web.user.repository.PhoneCertificationRepository;
 import com.demo.lucky_platform.web.user.repository.RoleRepository;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PhoneCertificationRepository phoneCertificationRepository;
     private final IamportClient iamportClient;
+    private final SecurityContextService securityContextService;
 
     @Transactional
     @Override
@@ -47,6 +49,8 @@ public class UserServiceImpl implements UserService {
         user.initRole(role);
 
         User _user = userRepository.save(user);
+
+        securityContextService.refreshSecurityContext(_user);
         this.phoneCertificate(_user, signUpForm.impUid());
     }
 
@@ -58,10 +62,25 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("동일 닉네임 유저가 존재합니다.");
         }
 
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(RuntimeException::new);
+        User user = getUser(userId);
         user.editNickname(nickname);
         userRepository.save(user);
+    }
+
+    @Override
+    public void editPassword(Long userId, EditPasswordForm editPasswordForm) {
+        User user = getUser(userId);
+        String password = user.getPassword();
+        boolean matches = bCryptPasswordEncoder.matches(editPasswordForm.password(), password);
+
+        if (!matches) {
+            throw new RuntimeException("비밀번호가 틀렸습니다.");
+        }
+
+        user.editPassword(bCryptPasswordEncoder.encode(editPasswordForm.newPassword()));
+
+        userRepository.save(user);
+        securityContextService.clearContext();
     }
 
     private Map<String, String> phoneCertificate(User user, String impUid) {
@@ -106,4 +125,10 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("오류가 발생했습니다.");
         }
     }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                             .orElseThrow(RuntimeException::new);
+    }
+
 }

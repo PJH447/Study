@@ -2,6 +2,7 @@ package com.demo.lucky_platform.web.user.controller;
 
 import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.dto.EditInfoForm;
+import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
 import com.demo.lucky_platform.web.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,23 @@ public class UserRestController {
         return "success";
     }
 
-    @PostMapping("/v1/edit")
-    public String editUserInfo(@AuthenticationPrincipal AuthenticatedUser user, @RequestBody EditInfoForm editInfoForm) {
+    @PostMapping("/v1/edit/info")
+    public String editUserInfo(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @RequestBody EditInfoForm editInfoForm
+    ) {
+
         userService.editNickname(user.getId(), editInfoForm.nickname());
 
+        return "success";
+    }
+
+    @PostMapping("/v1/edit/password")
+    public String editUserInfo(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            @RequestBody EditPasswordForm editPasswordForm
+    ) {
+        userService.editPassword(user.getId(), editPasswordForm);
         return "success";
     }
 }
