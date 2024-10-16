@@ -1,5 +1,6 @@
 package com.demo.lucky_platform.web.user.controller;
 
+import com.demo.lucky_platform.web.common.dto.CommonResponse;
 import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.dto.EditInfoForm;
 import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
@@ -9,6 +10,7 @@ import com.demo.lucky_platform.web.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,43 +22,51 @@ public class UserRestController {
     private final UserService userService;
     private final AuthService authService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/v1/sign-up")
-    public String signUp(@RequestBody SignUpForm signUpForm) {
+    public CommonResponse signUp(@RequestBody SignUpForm signUpForm) {
         userService.signUp(signUpForm);
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/v1/edit/info")
-    public String editUserInfo(
+    public CommonResponse editUserInfo(
             @AuthenticationPrincipal AuthenticatedUser user,
             @RequestBody EditInfoForm editInfoForm
     ) {
 
         userService.editNickname(user.getId(), editInfoForm.nickname());
 
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/v1/edit/password")
-    public String editPassword(
+    public CommonResponse editPassword(
             @AuthenticationPrincipal AuthenticatedUser user,
             @RequestBody EditPasswordForm editPasswordForm,
             HttpServletResponse response
     ) {
         userService.editPassword(user.getId(), editPasswordForm);
         authService.logout(user, response);
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/v1/nickname")
-    public boolean existSameNickname(@RequestParam(value = "nickname") String nickname) {
-        return userService.existSameNickname(nickname);
+    public CommonResponse existSameNickname(@RequestParam(value = "nickname") String nickname) {
+        boolean existSameNickname = userService.existSameNickname(nickname);
+        return CommonResponse.createResponse(existSameNickname);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/v1/email")
-    public boolean existSameEmail(@RequestParam(value = "email") String email) {
-        return userService.existSameEmail(email);
+    public CommonResponse existSameEmail(@RequestParam(value = "email") String email) {
+        boolean existSameEmail = userService.existSameEmail(email);
+        return CommonResponse.createResponse(existSameEmail);
     }
 
 }

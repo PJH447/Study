@@ -1,5 +1,6 @@
 package com.demo.lucky_platform.web.user.controller;
 
+import com.demo.lucky_platform.web.common.dto.CommonResponse;
 import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.dto.LoginForm;
 import com.demo.lucky_platform.web.user.service.AuthService;
@@ -20,32 +21,32 @@ public class AuthController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/v1/login")
-    public String login(
+    public CommonResponse login(
             @RequestBody LoginForm loginForm,
             HttpServletResponse response
     ) {
         authService.login(loginForm, response);
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/v1/reissue")
-    public String reissueAccessToken(
+    public CommonResponse reissueAccessToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
         authService.reissueAccessToken(request, response);
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/v1/logout")
-    public String logout(
+    public CommonResponse logout(
             @AuthenticationPrincipal AuthenticatedUser user,
             HttpServletResponse response
     ) {
         authService.logout(user, response);
-        return "success";
+        return CommonResponse.createVoidResponse();
     }
 }
