@@ -10,4 +10,8 @@ public interface UserService {
     void editNickname(Long userId, String nickname);
 
     void editPassword(Long userId, EditPasswordForm editPasswordForm);
+
+    boolean existSameNickname(String nickname);
+
+    boolean existSameEmail(String email);
 }

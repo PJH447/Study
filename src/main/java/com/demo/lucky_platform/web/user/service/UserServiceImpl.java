@@ -84,6 +84,16 @@ public class UserServiceImpl implements UserService {
         securityContextService.clearContext();
     }
 
+    @Override
+    public boolean existSameNickname(String nickname) {
+        return userRepository.findByNicknameAndEnabledIsTrue(nickname).isPresent();
+    }
+
+    @Override
+    public boolean existSameEmail(String email) {
+        return userRepository.findByNicknameAndEnabledIsTrue(email).isPresent();
+    }
+
     private Map<String, String> phoneCertificate(User user, String impUid) {
         try {
             IamportResponse<Certification> iamportResponse = iamportClient.certificationByImpUid(impUid);

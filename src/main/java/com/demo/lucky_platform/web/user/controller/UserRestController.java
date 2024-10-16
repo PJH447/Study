@@ -43,4 +43,15 @@ public class UserRestController {
         userService.editPassword(user.getId(), editPasswordForm);
         return "success";
     }
+
+    @GetMapping("/v1/nickname")
+    public boolean existSameNickname(@RequestParam(value = "nickname") String nickname) {
+        return userService.existSameNickname(nickname);
+    }
+
+    @GetMapping("/v1/email")
+    public boolean existSameEmail(@RequestParam(value = "email") String email) {
+        return userService.existSameEmail(email);
+    }
+
 }
