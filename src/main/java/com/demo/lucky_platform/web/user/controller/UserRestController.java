@@ -4,7 +4,9 @@ import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.dto.EditInfoForm;
 import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
+import com.demo.lucky_platform.web.user.service.AuthService;
 import com.demo.lucky_platform.web.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserRestController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/v1/sign-up")
@@ -36,11 +39,13 @@ public class UserRestController {
     }
 
     @PostMapping("/v1/edit/password")
-    public String editUserInfo(
+    public String editPassword(
             @AuthenticationPrincipal AuthenticatedUser user,
-            @RequestBody EditPasswordForm editPasswordForm
+            @RequestBody EditPasswordForm editPasswordForm,
+            HttpServletResponse response
     ) {
         userService.editPassword(user.getId(), editPasswordForm);
+        authService.logout(user, response);
         return "success";
     }
 
