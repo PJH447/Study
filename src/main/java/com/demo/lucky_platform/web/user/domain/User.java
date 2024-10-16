@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
