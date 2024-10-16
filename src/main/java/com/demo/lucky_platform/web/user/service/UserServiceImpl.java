@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void signUp(SignUpForm signUpForm) {
+    public void signUp(final SignUpForm signUpForm) {
         User user = User.builder()
                         .email(signUpForm.email())
                         .phone(signUpForm.phone())
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void editNickname(Long userId, String nickname) {
+    public void editNickname(final Long userId, final String nickname) {
         Optional<User> userByNickname = userRepository.findByNicknameAndEnabledIsTrue(nickname);
         if (userByNickname.isPresent()) {
             throw new RuntimeException("동일 닉네임 유저가 존재합니다.");
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void editPassword(Long userId, EditPasswordForm editPasswordForm) {
+    public void editPassword(final Long userId, final EditPasswordForm editPasswordForm) {
         User user = getUser(userId);
         String password = user.getPassword();
         boolean matches = bCryptPasswordEncoder.matches(editPasswordForm.password(), password);
@@ -82,16 +82,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existSameNickname(String nickname) {
+    public boolean existSameNickname(final String nickname) {
         return userRepository.findByNicknameAndEnabledIsTrue(nickname).isPresent();
     }
 
     @Override
-    public boolean existSameEmail(String email) {
+    public boolean existSameEmail(final String email) {
         return userRepository.findByNicknameAndEnabledIsTrue(email).isPresent();
     }
 
-    private Map<String, String> phoneCertificate(User user, String impUid) {
+    private Map<String, String> phoneCertificate(final User user, final String impUid) {
         try {
             IamportResponse<Certification> iamportResponse = iamportClient.certificationByImpUid(impUid);
             Certification certification = iamportResponse.getResponse();
