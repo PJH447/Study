@@ -1,5 +1,6 @@
 package com.demo.lucky_platform.config.security;
 
+import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.service.UserDetailService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,25 +28,36 @@ public class JwtTokenProvider {
     @Value("${app.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${app.jwt.expiration-milliseconds}")
-    private long jwtExpirationDateMs;
+    @Value("${app.jwt.access-expiration-milliseconds}")
+    private long jwtAccessExpirationDateMs;
+
+    @Value("${app.jwt.refresh-expiration-milliseconds}")
+    private long jwtRefreshExpirationDateMs;
 
     private final UserDetailService userDetailService;
 
-    public String generateToken(Authentication authentication) {
+    public String generateAccessToken(User user) {
+        return this.generateToken(user, jwtAccessExpirationDateMs);
+    }
+
+    public String generateRefreshToken(User user) {
+        return this.generateToken(user, jwtRefreshExpirationDateMs);
+    }
+
+    private String generateToken(User user, Long expirationTime) {
         Map<String, Object> claims = new HashMap<>();
         // claims에 사용자 정보 추가 (예: userId, roles)
 
         return Jwts.builder()
                    .setClaims(claims)
-                   .setSubject(authentication.getName())
+                   .setSubject(user.getEmail())
                    .setIssuedAt(new Date())
-                   .setExpiration(new Date(new Date().getTime() + jwtExpirationDateMs))
+                   .setExpiration(new Date(new Date().getTime() + expirationTime))
                    .signWith(SignatureAlgorithm.HS512, secretKey)
                    .compact();
     }
 
-    public String getUserIdFromJWT(String token) {
+    public String getSubjectByToken(String token) {
         Claims claims = getClaims(token);
         return claims.getSubject();
     }
@@ -55,15 +67,15 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            log.error("Invalid JWT signature");
+            log.info("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
+            log.info("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
+            log.info("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
+            log.info("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty.");
+            log.info("JWT claims string is empty.");
         }
         return false;
     }

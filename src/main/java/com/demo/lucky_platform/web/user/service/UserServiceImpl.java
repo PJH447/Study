@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PhoneCertificationRepository phoneCertificationRepository;
     private final IamportClient iamportClient;
-    private final SecurityContextService securityContextService;
 
     @Transactional
     @Override
@@ -50,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         User _user = userRepository.save(user);
 
-        securityContextService.refreshSecurityContext(_user);
         this.phoneCertificate(_user, signUpForm.impUid());
     }
 
@@ -81,7 +79,6 @@ public class UserServiceImpl implements UserService {
         user.editPassword(bCryptPasswordEncoder.encode(editPasswordForm.newPassword()));
 
         userRepository.save(user);
-        securityContextService.clearContext();
     }
 
     @Override

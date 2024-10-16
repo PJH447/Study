@@ -50,7 +50,7 @@ public class SecurityConfig {
             .exceptionHandling((handling) -> handling.authenticationEntryPoint(jwtEntryPoint)
                                                      .accessDeniedHandler(accessDeniedHandler))
             .addFilterBefore(characterEncodingFilter, CsrfFilter.class)
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .securityContext((securityContext) -> {
                         securityContext.securityContextRepository(delegatingSecurityContextRepository());
                         securityContext.requireExplicitSave(true);
@@ -73,6 +73,10 @@ public class SecurityConfig {
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository()
         );
+    }
+
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider);
     }
 
 }

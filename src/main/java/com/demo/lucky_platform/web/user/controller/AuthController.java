@@ -1,0 +1,51 @@
+package com.demo.lucky_platform.web.user.controller;
+
+import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
+import com.demo.lucky_platform.web.user.dto.LoginForm;
+import com.demo.lucky_platform.web.user.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/v1/login")
+    public String login(
+            @RequestBody LoginForm loginForm,
+            HttpServletResponse response
+    ) {
+        authService.login(loginForm, response);
+        return "success";
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/v1/reissue")
+    public String reissueAccessToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        authService.reissueAccessToken(request, response);
+        return "success";
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/v1/logout")
+    public String logout(
+            @AuthenticationPrincipal AuthenticatedUser user,
+            HttpServletResponse response
+    ) {
+        authService.logout(user, response);
+        return "success";
+    }
+}
