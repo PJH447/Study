@@ -57,8 +57,8 @@ public class AwsS3Service {
         return uploadObject(filePath, destinationFileName, multipartFile);
     }
 
-    public List<UploadAttachmentResponse> uploadFile(String filePath, String fileName,
-                                                     List<MultipartFile> multipartFileList) {
+    public List<UploadAttachmentResponse> uploadFile(String filePath, String fileName, List<MultipartFile> multipartFileList) {
+
         List<UploadAttachmentResponse> list = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFileList) {
@@ -75,11 +75,8 @@ public class AwsS3Service {
         }
 
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
-                                                 .withEndpointConfiguration(
-                                                         new AwsClientBuilder.EndpointConfiguration(endPoint,
-                                                                 regionName))
-                                                 .withCredentials(new AWSStaticCredentialsProvider(
-                                                         new BasicAWSCredentials(accessKey, secretKey)))
+                                                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, regionName))
+                                                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                                                  .build();
 
         UploadAttachmentResponse result = new UploadAttachmentResponse();
@@ -92,8 +89,7 @@ public class AwsS3Service {
             objectMetadata.setCacheControl("max-age=1296000");
             objectMetadata.setContentLength(multipartFile.getInputStream().available());
 
-            PutObjectRequest request = new PutObjectRequest(bucketName, filePath + objKeyName,
-                    inputStream, objectMetadata);
+            PutObjectRequest request = new PutObjectRequest(bucketName, filePath + objKeyName, inputStream, objectMetadata);
             request.setCannedAcl(CannedAccessControlList.PublicRead);
 
             s3.putObject(request);
@@ -110,13 +106,11 @@ public class AwsS3Service {
         return result;
     }
 
-    public UploadAttachmentResponse uploadFileUsingResize(String filePath, int width, int height, String fileName,
-                                                          MultipartFile multipartFile) {
+    public UploadAttachmentResponse uploadFileUsingResize(String filePath, int width, int height, String fileName, MultipartFile multipartFile) {
         return uploadObjectUsingResize(filePath, width, height, fileName, multipartFile);
     }
 
-    public UploadAttachmentResponse uploadFileUsingResize(String filePath, int width, int height,
-                                                          MultipartFile multipartFile) {
+    public UploadAttachmentResponse uploadFileUsingResize(String filePath, int width, int height, MultipartFile multipartFile) {
 
         String sourceFileName = multipartFile.getOriginalFilename();
         String sourceFileNameExtension = FilenameUtils.getExtension(sourceFileName).toLowerCase();
@@ -125,8 +119,7 @@ public class AwsS3Service {
         return uploadObjectUsingResize(filePath, width, height, destinationFileName, multipartFile);
     }
 
-    public List<UploadAttachmentResponse> uploadFileUsingResize(String filePath, int width, int height, String fileName,
-                                                                List<MultipartFile> multipartFileList) {
+    public List<UploadAttachmentResponse> uploadFileUsingResize(String filePath, int width, int height, String fileName, List<MultipartFile> multipartFileList) {
         List<UploadAttachmentResponse> list = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFileList) {
@@ -137,19 +130,15 @@ public class AwsS3Service {
         return list;
     }
 
-    private UploadAttachmentResponse uploadObjectUsingResize(String filePath, int width, int height, String objKeyName,
-                                                             MultipartFile multipartFile) {
+    private UploadAttachmentResponse uploadObjectUsingResize(String filePath, int width, int height, String objKeyName, MultipartFile multipartFile) {
 
         if (!ObjectUtils.isEmpty(filePath)) {
             filePath = filePath.replaceAll("^/", "");
         }
 
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
-                                                 .withEndpointConfiguration(
-                                                         new AwsClientBuilder.EndpointConfiguration(endPoint,
-                                                                 regionName))
-                                                 .withCredentials(new AWSStaticCredentialsProvider(
-                                                         new BasicAWSCredentials(accessKey, secretKey)))
+                                                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, regionName))
+                                                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                                                  .build();
 
         UploadAttachmentResponse result = new UploadAttachmentResponse();
@@ -162,41 +151,6 @@ public class AwsS3Service {
             inputStream = multipartFile.getInputStream();
 
             image = ImageIO.read(inputStream);
-
-//            if (image.getWidth(null) > width) {
-//                File folder = new File(thumbnailFilePath);
-//                if (!folder.exists()) {
-//                    folder.mkdir();
-//                }
-//
-//                outputStream = new FileOutputStream(new File(sourceFileName));
-//                outputStream.write(multipartFile.getBytes());
-//
-//                Tinify.setKey(tinyfyKey);
-//
-////                AnytarotConfig compressionCnt = anytarotConfigService.findByKey(AnytarotConfig.AnytarotConfigKey.CONFIG_TINYFY_MONTH_COUNT);
-//
-//                int compressionsThisMonth = Tinify.compressionCount();
-//
-//                if (compressionsThisMonth < Integer.parseInt(compressionCnt.getValue())) {
-//                    Source source = Tinify.fromFile(sourceFileName);
-//
-//                    Options options = new Options()
-//                            .with("method", "fit")
-//                            .with("width", width)
-//                            .with("height", height);
-//                    source.resize(options).toFile(thumnailFileName);
-//                } else {
-//                    Thumbnails.of(sourceFileName)
-//                              .size(width, height)
-//                              .toFile(new File(thumnailFileName));
-//                }
-//
-//                inputStream.close();
-//                inputStream = new FileInputStream(new File(thumnailFileName));
-//
-//                usingResinze = true;
-//            }
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
@@ -214,22 +168,6 @@ public class AwsS3Service {
             result.setFileName(objKeyName);
             result.setFileSize(objectMetadata.getContentLength());
 
-//            if (usingResinze) {
-//                outputStream.close();
-//                // 기존 input stream 종료
-//                outputStream = null;
-//
-//                File file = new File(sourceFileName);
-//
-//                if (file.exists()) {
-//                    file.delete();
-//                }
-//
-//                file = new File(thumnailFileName);
-//                if (file.exists()) {
-//                    file.delete();
-//                }
-//            }
         } catch (IOException e) {
             throw new AmazonS3Exception(e.getMessage(), e);
         } finally {
@@ -254,14 +192,10 @@ public class AwsS3Service {
 
     public void deleteObject(String filePath, String objKeyName) {
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
-                                                 .withEndpointConfiguration(
-                                                         new AwsClientBuilder.EndpointConfiguration(endPoint,
-                                                                 regionName))
-                                                 .withCredentials(new AWSStaticCredentialsProvider(
-                                                         new BasicAWSCredentials(accessKey, secretKey)))
+                                                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, regionName))
+                                                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                                                  .build();
 
         s3.deleteObject(bucketName, filePath + objKeyName);
-
     }
 }
