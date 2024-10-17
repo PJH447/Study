@@ -1,6 +1,7 @@
 package com.demo.lucky_platform.web.user.domain;
 
 import com.demo.lucky_platform.web.common.domain.BaseEntity;
+import com.demo.lucky_platform.web.counselor.domain.Favorite;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -8,11 +9,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @EqualsAndHashCode(callSuper = true)
@@ -60,6 +61,12 @@ public class User extends BaseEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    @Builder.Default
+    @Where(clause = "enabled = true")
+    @BatchSize(size = 600)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Favorite> favoriteList = new ArrayList<>();
 
     public String getEmail() {
         if (ObjectUtils.isEmpty(this.email)) {

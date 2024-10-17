@@ -42,4 +42,8 @@ public class BaseEntity implements Serializable {
 
     @Column(name = "enabled", columnDefinition = "bit(1)")
     private Boolean enabled = true;
+
+    public void disabled() {
+        this.enabled = false;
+    }
 }
