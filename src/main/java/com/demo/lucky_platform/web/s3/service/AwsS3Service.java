@@ -79,7 +79,6 @@ public class AwsS3Service {
                                                  .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                                                  .build();
 
-        UploadAttachmentResponse result = new UploadAttachmentResponse();
 
         try {
             InputStream inputStream = multipartFile.getInputStream();
@@ -94,16 +93,16 @@ public class AwsS3Service {
 
             s3.putObject(request);
 
-            result.setLink(filePath + objKeyName);
-            result.setFileContentType(multipartFile.getContentType());
-            result.setFileName(objKeyName);
-            result.setFileSize(objectMetadata.getContentLength());
+            return new UploadAttachmentResponse(
+                    objKeyName,
+                    objectMetadata.getContentLength(),
+                    multipartFile.getContentType(),
+                    filePath + objKeyName
+            );
 
         } catch (IOException e) {
             throw new AmazonS3Exception(e.getMessage(), e);
         }
-
-        return result;
     }
 
     public UploadAttachmentResponse uploadFileUsingResize(String filePath, int width, int height, String fileName, MultipartFile multipartFile) {
@@ -157,8 +156,7 @@ public class AwsS3Service {
             objectMetadata.setCacheControl("max-age=1296000");
             objectMetadata.setContentLength(inputStream.available());
 
-            PutObjectRequest request = new PutObjectRequest(bucketName, filePath + objKeyName,
-                    inputStream, objectMetadata);
+            PutObjectRequest request = new PutObjectRequest(bucketName, filePath + objKeyName, inputStream, objectMetadata);
             request.setCannedAcl(CannedAccessControlList.PublicRead);
 
             s3.putObject(request);
