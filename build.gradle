@@ -60,6 +60,8 @@ dependencies {
 	implementation 'commons-io:commons-io:2.16.1'
 	implementation 'org.apache.commons:commons-lang3:3.17.0'
 
+	// redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.23.0'
 }
 
 tasks.named('test') {
