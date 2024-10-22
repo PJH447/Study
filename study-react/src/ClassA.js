@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import axios from "axios";
 
 function ClassA() {
@@ -13,17 +13,19 @@ function ClassA() {
         axios.post('http://127.0.0.1:9003/api/auth/v1/login', {
             "email": "test@naver.com",
             "password": "password"
-        },{
-            headers:{
+        }, {
+            headers: {
                 'Content-Type': 'application/json'
             },
             withCredentials: true
         }).then(response => {
-
-            const authorizationHeader = response.headers.authorization;
-            axios.defaults.headers.common[
-                'Authorization'
-                ] = `Bearer ${authorizationHeader}`;
+            console.log(response);
+            if (response.status === 200) {
+                const authorizationHeader = response.headers.authorization;
+                axios.defaults.headers.common[
+                    'Authorization'
+                    ] = `Bearer ${authorizationHeader}`;
+            }
 
         }).catch(error => {
             console.log(error);
@@ -32,15 +34,15 @@ function ClassA() {
     };
 
     const reissue = () => {
-        console.log(message);
-        axios.post('http://127.0.0.1:9003/api/auth/v1/reissue', {
-        },{
-            headers:{
+        axios.post('http://127.0.0.1:9003/api/auth/v1/reissue', {}, {
+            headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             withCredentials: true
         }).then(response => {
-            console.log(response)
+            console.log(response);
+            if (response.status === 200) {
+            }
         }).catch(error => {
             console.log(error);
             return false;
@@ -48,18 +50,17 @@ function ClassA() {
     };
 
     const logout = () => {
-        console.log(message);
-        axios.post('http://127.0.0.1:9003/api/auth/v1/logout', {
-        },{
-            headers:{
+        axios.post('http://127.0.0.1:9003/api/auth/v1/logout', {}, {
+            headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).then(response => {
             console.log(response)
-
-            axios.defaults.headers.common[
-                'Authorization'
-                ] = `Bearer `;
+            if (response.status === 200) {
+                axios.defaults.headers.common[
+                    'Authorization'
+                    ] = `Bearer `;
+            }
 
         }).catch(error => {
             console.log(error);
@@ -68,8 +69,8 @@ function ClassA() {
     };
 
     const getTest = () => {
-        axios.get('http://127.0.0.1:9003/api/test/v2',{
-            headers:{
+        axios.get('http://127.0.0.1:9003/api/test/v2', {
+            headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response => {
