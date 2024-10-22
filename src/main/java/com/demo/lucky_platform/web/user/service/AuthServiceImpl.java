@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
                                                       .maxAge(jwtRefreshExpirationDateMs)
                                                       .httpOnly(true)
                                                       .secure(true)
-                                                      .sameSite("Lax")
+                                                      .sameSite("None")
                                                       .build();
         response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
@@ -111,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
                                                       .path("/")
                                                       .httpOnly(true)
                                                       .secure(true)
-                                                      .sameSite("Lax")
+                                                      .sameSite("None")
                                                       .build();
         response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
