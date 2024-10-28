@@ -5,6 +5,7 @@ import com.demo.lucky_platform.web.user.domain.Role;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
+import com.demo.lucky_platform.web.user.dto.HeaderInfoDto;
 import com.demo.lucky_platform.web.user.repository.PhoneCertificationRepository;
 import com.demo.lucky_platform.web.user.repository.RoleRepository;
 import com.demo.lucky_platform.web.user.repository.UserRepository;
@@ -89,6 +90,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existSameEmail(final String email) {
         return userRepository.findByNicknameAndEnabledIsTrue(email).isPresent();
+    }
+
+    @Override
+    public HeaderInfoDto findHeaderInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                                  .orElseThrow(RuntimeException::new);
+        return HeaderInfoDto.from(user);
     }
 
     private Map<String, String> phoneCertificate(final User user, final String impUid) {

@@ -2,6 +2,7 @@ package com.demo.lucky_platform.web.user.service;
 
 import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
+import com.demo.lucky_platform.web.user.dto.HeaderInfoDto;
 
 public interface UserService {
 
@@ -14,4 +15,6 @@ public interface UserService {
     boolean existSameNickname(String nickname);
 
     boolean existSameEmail(String email);
+
+    HeaderInfoDto findHeaderInfo(Long userId);
 }

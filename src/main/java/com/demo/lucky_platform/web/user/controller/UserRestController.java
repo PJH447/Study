@@ -69,4 +69,13 @@ public class UserRestController {
         return CommonResponse.createResponse(existSameEmail);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/v1/header-info")
+    public CommonResponse getHeaderInfo(
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ) {
+        return CommonResponse.createResponse(userService.findHeaderInfo(authenticatedUser.getId()));
+    }
+
 }

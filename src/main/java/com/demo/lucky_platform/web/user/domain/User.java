@@ -108,4 +108,14 @@ public class User extends BaseEntity {
     public void editPassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public Boolean isAdmin() {
+        return this.roles.stream()
+                         .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+    }
+
+    public Boolean isVip() {
+        return this.roles.stream()
+                         .anyMatch(r -> r.getAuthority().equals("VIP"));
+    }
 }
