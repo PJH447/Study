@@ -1,18 +1,14 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from "axios";
 
-function ClassA() {
-    const [message, setMessage] = useState('hihi');
+function login(inputName, inputPassword) {
 
-    const event = () => {
-        console.log('set new Message ');
-        setMessage('new Message');
-    };
-
-    const login = () => {
+    return () => {
         axios.post('http://127.0.0.1:9003/api/auth/v1/login', {
-            "email": "test@naver.com",
-            "password": "password"
+            // "email": "test@naver.com",
+            // "password": "password"
+            "email": inputName.current.value,
+            "password": inputPassword.current.value
         }, {
             headers: {
                 'Content-Type': 'application/json'
@@ -32,6 +28,14 @@ function ClassA() {
             return false;
         });
     };
+}
+
+function ClassA() {
+
+    const inputName = useRef();
+    const inputPassword = useRef();
+
+    const doLogin = login(inputName, inputPassword);
 
     const reissue = () => {
         axios.post('http://127.0.0.1:9003/api/auth/v1/reissue', {}, {
@@ -52,7 +56,7 @@ function ClassA() {
     const logout = () => {
         axios.post('http://127.0.0.1:9003/api/auth/v1/logout', {}, {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         }).then(response => {
             console.log(response)
@@ -82,11 +86,29 @@ function ClassA() {
         });
     };
 
+    const [items, setItems] = useState([])
+
+    const getTest2 = () => {
+        setItems([...items, "isNewItem"]);
+    };
+
+    const getTest3 = () => {
+        setItems(items.slice(0, -1));
+    };
+
     return <>
-        <div onClick={login}>is login</div>
+        <form>
+            <input type={"text"} name={"email"} placeholder={"email"} ref={inputName}/><br/>
+            <input type={"password"} name={"password"} placeholder={"password"} ref={inputPassword}
+                   autoComplete={"off"}/>
+        </form>
+        <div onClick={doLogin}>is login</div>
         <div onClick={reissue}>is reissue</div>
         <div onClick={logout}>is logout</div>
         <div onClick={getTest}>is ClassA2</div>
+        <div onClick={getTest2}>add el</div>
+        <div onClick={getTest3}>del el</div>
+        <a href="/hi2">hi2</a>
     </>;
 }
 
