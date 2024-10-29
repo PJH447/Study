@@ -2,6 +2,7 @@ package com.demo.lucky_platform.web.user.service;
 
 import com.demo.lucky_platform.config.other.CacheTokenRepository;
 import com.demo.lucky_platform.config.security.JwtTokenProvider;
+import com.demo.lucky_platform.exception.NotFoundRefreshTokenException;
 import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.dto.LoginForm;
@@ -54,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     public void reissueAccessToken(final HttpServletRequest request, final HttpServletResponse response) {
         String refreshToken = this.getCookie(request, REFRESH_TOKEN_COOKIE_KEY)
                                   .map(Cookie::getValue)
-                                  .orElseThrow(() -> new RuntimeException("refresh token 이 존재하지 않습니다."));
+                                  .orElseThrow(() -> new NotFoundRefreshTokenException("refresh token 이 존재하지 않습니다."));
 
         String email = jwtTokenProvider.getSubjectByToken(refreshToken);
         User user = userRepository.findByEmailAndEnabledIsTrue(email)
@@ -62,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
 
         String _refreshToken = cacheTokenRepository.getData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
         if (!refreshToken.equals(_refreshToken)) {
-            throw new RuntimeException("올바른 토큰이 아닙니다.");
+            throw new NotFoundRefreshTokenException("올바른 토큰이 아닙니다.");
         }
 
         this.issueToken(response, user);

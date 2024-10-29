@@ -1,8 +1,9 @@
-import {combineReducers, createStore} from "redux";
+import {applyMiddleware, combineReducers, createStore} from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import reducer from "./reducer";
-import accessTokenReducer from "./AccessTokenReducer";
+import accessTokenReducer from "./accessTokenReducer";
+import {thunk} from "redux-thunk";
 
 const persistConfig = {
     key: "root",
@@ -18,7 +19,7 @@ export const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = createStore(persistedReducer);
+const store = createStore(persistedReducer, applyMiddleware(thunk));
 const persistor = persistStore(store);
 
 export { store, persistor };

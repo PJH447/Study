@@ -47,3 +47,17 @@
     transform: rotate(360deg);
   }
 }
+
+.blind {
+  display: none;
+}
+
+div.app-head {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+div.app-head > span {
+  margin: 0px 10px 0px 10px!important;
+}

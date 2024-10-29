@@ -1,13 +1,13 @@
 package com.demo.lucky_platform.exception.handler;
 
 import com.demo.lucky_platform.exception.DuplicateRequestException;
+import com.demo.lucky_platform.exception.NotFoundRefreshTokenException;
 import com.demo.lucky_platform.exception.ResultNotFoundException;
 import com.demo.lucky_platform.web.common.dto.CommonResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +31,13 @@ public class GlobalRestExceptionHandler {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = ResultNotFoundException.class)
     public CommonResponse h2(HttpServletRequest req, ResultNotFoundException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
+
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = NotFoundRefreshTokenException.class)
+    public CommonResponse h3(HttpServletRequest req, NotFoundRefreshTokenException e) {
         warningLogging(req, e, false);
         return CommonResponse.createErrorResponse(e);
     }
