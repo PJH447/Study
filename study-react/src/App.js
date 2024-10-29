@@ -6,6 +6,7 @@ import {BrowserRouter as Router, Link, Route, Routes} from 'react-router-dom';
 import Login from "./component/Login";
 import {getLocalStorage} from "./util";
 import {logout} from "./auth/auth";
+import Navigation from "./component/Navigation";
 
 function App() {
     const accessToken = getLocalStorage("accessToken")
@@ -25,8 +26,6 @@ function App() {
                         Edit <code>src/App.js</code> and save to reload.
                     </p>
                     <div className={"app-head"}>
-                        <span><Link to='/hi'>hi</Link></span>
-                        <span><Link to='/hi2'>hi2</Link></span>
                         <span className={loginBtnBlindClass}><Link to='/login'>로그인</Link></span>
                         <span className={logoutBtnBlindClass} onClick={handleLogout}>로그아웃</span>
                     </div>
@@ -38,6 +37,7 @@ function App() {
                         <Route path='/login' className={"blindClass"} element={<Login/>}/>
                     </Routes>
                 </section>
+                <Navigation/>
             </Router>
         </div>
     );
