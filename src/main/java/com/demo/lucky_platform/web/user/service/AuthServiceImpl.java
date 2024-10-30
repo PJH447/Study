@@ -3,7 +3,6 @@ package com.demo.lucky_platform.web.user.service;
 import com.demo.lucky_platform.config.other.CacheTokenRepository;
 import com.demo.lucky_platform.config.security.JwtTokenProvider;
 import com.demo.lucky_platform.exception.NotFoundRefreshTokenException;
-import com.demo.lucky_platform.web.user.domain.AuthenticatedUser;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.dto.LoginForm;
 import com.demo.lucky_platform.web.user.repository.UserRepository;
@@ -73,18 +72,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(final AuthenticatedUser user, final HttpServletResponse response) {
+    public void logout(final HttpServletRequest request, final HttpServletResponse response) {
 
-//        response.setHeader(ACCESS_TOKEN_HEADER_KEY, null);
         this.deleteAccessToken(response);
         this.deleteRefreshToken(response);
-        cacheTokenRepository.deleteData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
+
+        this.getCookie(request, REFRESH_TOKEN_COOKIE_KEY)
+            .map(Cookie::getValue)
+            .ifPresent(refreshToken -> {
+                String email = jwtTokenProvider.getSubjectByToken(refreshToken);
+                User user = userRepository.findByEmailAndEnabledIsTrue(email)
+                                          .orElseThrow(RuntimeException::new);
+                cacheTokenRepository.deleteData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
+            });
     }
 
     private void issueToken(final HttpServletResponse response, final User user) {
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         this.setAccessToken(accessToken, response);
-//        response.setHeader(ACCESS_TOKEN_HEADER_KEY, accessToken);
 
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
         this.setRefreshToken(refreshToken, response);

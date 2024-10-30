@@ -7,6 +7,7 @@ import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
 import com.demo.lucky_platform.web.user.service.AuthService;
 import com.demo.lucky_platform.web.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,10 +49,11 @@ public class UserRestController {
     public CommonResponse editPassword(
             @AuthenticationPrincipal AuthenticatedUser user,
             @RequestBody EditPasswordForm editPasswordForm,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         userService.editPassword(user.getId(), editPasswordForm);
-        authService.logout(user, response);
+        authService.logout(request, response);
         return CommonResponse.createVoidResponse();
     }
 

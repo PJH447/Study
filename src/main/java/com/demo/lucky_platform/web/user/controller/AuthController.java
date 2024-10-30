@@ -40,13 +40,12 @@ public class AuthController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/v1/logout")
     public CommonResponse logout(
-            @AuthenticationPrincipal AuthenticatedUser user,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
-        authService.logout(user, response);
+        authService.logout(request, response);
         return CommonResponse.createVoidResponse();
     }
 }
