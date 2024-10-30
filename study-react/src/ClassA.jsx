@@ -1,12 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import axios from "axios";
-import {useDispatch, useSelector} from "react-redux";
 import {login, logout, reissue} from "./auth/auth";
-import {getLocalStorage} from "./util";
-
-
-const accessToken = getLocalStorage("accessToken");
-axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
 function ClassA() {
 
@@ -38,7 +32,8 @@ function ClassA() {
             const response = await axios.get('http://127.0.0.1:9003/api/test/v2', {
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                withCredentials: true,
             });
 
             if (response.status === 200) {
@@ -46,13 +41,7 @@ function ClassA() {
             }
 
         } catch (error) {
-            if (error.response && error.response.status === 401) {
-
-                reissue()
-                    .then(() => getTest());
-            } else {
-                console.log("Error:", error);
-            }
+            console.log("Error:", error);
         }
     };
 
