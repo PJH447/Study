@@ -30,7 +30,7 @@ public class CommonResponse<T> {
         return (CommonResponse<T>) CommonResponse.builder()
                                                  .success(true)
                                                  .message("success")
-                                                 .type(ResponseType.SINGLE)
+                                                 .type(ResponseType.NO_CONTENT)
                                                  .build();
     }
 
@@ -48,6 +48,7 @@ public class CommonResponse<T> {
         SINGLE,
         LIST,
         PAGE,
+        NO_CONTENT
         ;
 
         public static <T> ResponseType getResponseType(T data) {
