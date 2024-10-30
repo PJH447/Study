@@ -3,11 +3,11 @@ import {login} from "../auth/auth";
 
 
 function Login() {
-    const inputName = useRef(null); // Use null for initial value
+    const inputEmail = useRef(null); // Use null for initial value
     const inputPassword = useRef(null);
 
     const handleLogin = async () => {
-        const email = inputName.current.value;
+        const email = inputEmail.current.value;
         const password = inputPassword.current.value;
 
         if (!email || !password) {
@@ -22,7 +22,7 @@ function Login() {
     };
     return <>
         <form>
-            <input type={"text"} name={"email"} placeholder={"email"} ref={inputName}/><br/>
+            <input type={"email"} name={"email"} placeholder={"email"} ref={inputEmail}/><br/>
             <input type={"password"} name={"password"} placeholder={"password"} ref={inputPassword} autoComplete={"off"}/>
         </form>
         <button type={"button"} onClick={handleLogin}>로그인</button>

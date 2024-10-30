@@ -24,7 +24,7 @@ public class UserRestController {
     private final AuthService authService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/v1/sign-up")
+    @PostMapping("/v1/signUp")
     public CommonResponse signUp(@RequestBody SignUpForm signUpForm) {
         userService.signUp(signUpForm);
         return CommonResponse.createVoidResponse();
@@ -73,7 +73,7 @@ public class UserRestController {
 
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/v1/header-info")
+    @GetMapping("/v1/headerInfo")
     public CommonResponse getHeaderInfo(
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) {

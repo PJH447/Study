@@ -7,17 +7,20 @@ import Login from "./component/Login";
 import {getLocalStorage} from "./util";
 import {logout} from "./auth/auth";
 import Navigation from "./component/Navigation";
+import SignUp from "./component/SignUp";
 
 function App() {
     const accessToken = getLocalStorage("accessToken")
     const hasAccessToken = accessToken !== null;
-    const loginBtnBlindClass = hasAccessToken ? 'blind' : '';
-    const logoutBtnBlindClass = hasAccessToken ? '' : 'blind';
-    const handleLogout = () => logout()
-        .then(() => {
-            alert('로그아웃 되었습니다.');
-            window.location.href = '/';
-        });
+    const loginBtnBlindClass = hasAccessToken ? '' : '';
+    const logoutBtnBlindClass = hasAccessToken ? '' : '';
+    const handleLogout = () => {
+        logout()
+            .then(() => {
+                alert('로그아웃 되었습니다.');
+                window.location.href = '/';
+            });
+    };
     return (
         <div className="App">
             <Router>
@@ -35,6 +38,7 @@ function App() {
                         <Route path='/hi' element={<ClassA/>}/>
                         <Route path='/hi2' element={<DisplayComponent/>}/>
                         <Route path='/login' className={"blindClass"} element={<Login/>}/>
+                        <Route path='/signUp' className={"blindClass"} element={<SignUp/>}/>
                     </Routes>
                 </section>
                 <Navigation/>
