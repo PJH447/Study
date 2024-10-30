@@ -28,7 +28,10 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String REFRESH_TOKEN_CACHE_PREFIX = "refresh::";
     private static final String REFRESH_TOKEN_COOKIE_KEY = "refresh";
-    private static final String ACCESS_TOKEN_HEADER_KEY = "Authorization";
+    private static final String ACCESS_TOKEN_COOKIE_KEY = "access";
+
+    @Value("${app.jwt.access-expiration-milliseconds}")
+    private int jwtAccessExpirationDateMs;
 
     @Value("${app.jwt.refresh-expiration-milliseconds}")
     private long jwtRefreshExpirationDateMs;
@@ -72,14 +75,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void logout(final AuthenticatedUser user, final HttpServletResponse response) {
 
-        response.setHeader(ACCESS_TOKEN_HEADER_KEY, null);
+//        response.setHeader(ACCESS_TOKEN_HEADER_KEY, null);
+        this.deleteAccessToken(response);
         this.deleteRefreshToken(response);
         cacheTokenRepository.deleteData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
     }
 
     private void issueToken(final HttpServletResponse response, final User user) {
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        response.setHeader(ACCESS_TOKEN_HEADER_KEY, accessToken);
+        this.setAccessToken(accessToken, response);
+//        response.setHeader(ACCESS_TOKEN_HEADER_KEY, accessToken);
 
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
         this.setRefreshToken(refreshToken, response);
@@ -96,6 +101,28 @@ public class AuthServiceImpl implements AuthService {
                      .findAny();
     }
 
+    private void setAccessToken(final String accessToken, final HttpServletResponse response) {
+        ResponseCookie responseCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_KEY, accessToken)
+                                                      .path("/")
+                                                      .maxAge(jwtAccessExpirationDateMs)
+                                                      .httpOnly(true)
+                                                      .secure(true)
+                                                      .sameSite("None")
+                                                      .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    }
+
+    private void deleteAccessToken(final HttpServletResponse response) {
+        ResponseCookie responseCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_KEY, null)
+                                                      .path("/")
+                                                      .maxAge(0)
+                                                      .httpOnly(true)
+                                                      .secure(true)
+                                                      .sameSite("None")
+                                                      .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    }
+
     private void setRefreshToken(final String refreshToken, final HttpServletResponse response) {
         ResponseCookie responseCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_KEY, refreshToken)
                                                       .path("/")
@@ -104,17 +131,18 @@ public class AuthServiceImpl implements AuthService {
                                                       .secure(true)
                                                       .sameSite("None")
                                                       .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
     private void deleteRefreshToken(final HttpServletResponse response) {
         ResponseCookie responseCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_KEY, null)
                                                       .path("/")
+                                                      .maxAge(0)
                                                       .httpOnly(true)
                                                       .secure(true)
                                                       .sameSite("None")
                                                       .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
 }

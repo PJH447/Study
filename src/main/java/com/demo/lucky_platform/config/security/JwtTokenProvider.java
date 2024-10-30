@@ -3,6 +3,7 @@ package com.demo.lucky_platform.config.security;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.service.UserDetailService;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,19 +12,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_TYPE = "Bearer ";
+    private static final String ACCESS_TOKEN_COOKIE_KEY = "access";
 
     @Value("${app.jwt.secret-key}")
     private String secretKey;
@@ -91,11 +88,10 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        String string = this.getCookie(request, ACCESS_TOKEN_COOKIE_KEY)
+                            .map(Cookie::getValue)
+                            .orElse(null);
+        return string;
     }
 
     private Claims getClaims(String token) {
@@ -108,6 +104,16 @@ public class JwtTokenProvider {
             log.error("ExpiredJwtException = {}", e.getClaims());
             return e.getClaims();
         }
+    }
+
+    private Optional<Cookie> getCookie(final HttpServletRequest request, final String name) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0)
+            return Optional.empty();
+
+        return Arrays.stream(cookies)
+                     .filter(cookie -> cookie.getName().equals(name))
+                     .findAny();
     }
 
 }
