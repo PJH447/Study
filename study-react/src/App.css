@@ -6,8 +6,15 @@ a {
   text-decoration: none !important;
 }
 
+#root {
+  display: flex;
+  justify-content: center;
+}
+
 .App {
   text-align: center;
+  width: 100%;
+  max-width: 420px;
 }
 
 .App-logo {
@@ -54,6 +61,20 @@ a {
   to {
     transform: rotate(360deg);
   }
+}
+
+* {
+  font-family: "Pretendard", sans-serif;
+  box-sizing: border-box;
+  word-break: keep-all;
+  text-overflow: ellipsis;
+}
+
+a {
+  -webkit-transition: color 500ms linear;
+  -ms-transition: color 500ms linear;
+  transition: color 500ms linear;
+  text-decoration: none !important;
 }
 
 .blind {

@@ -1,8 +1,7 @@
-import axios from "axios";
-import {getLocalStorage, setLocalStorage} from "../util";
+import {onceApi} from "./axiosIntercepter";
 
 export const login = (email, password) => {
-    return axios.post('http://127.0.0.1:9003/api/auth/v1/login',
+    return onceApi.post('/api/auth/v1/login',
         {
             email: email,
             password: password,
@@ -26,10 +25,10 @@ export const login = (email, password) => {
 
 
 export const reissue = () => {
-    return axios.post('http://127.0.0.1:9003/api/auth/v1/reissue', {},
+    return onceApi.post('/api/auth/v1/reissue', {},
         {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
             withCredentials: true
         })
@@ -50,7 +49,7 @@ export const reissue = () => {
 
 export const logout = () => {
 
-    return axios.post('http://127.0.0.1:9003/api/auth/v1/logout', {},
+    return onceApi.post('/api/auth/v1/logout', {},
         {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

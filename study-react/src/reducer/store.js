@@ -4,16 +4,18 @@ import storage from "redux-persist/lib/storage";
 import reducer from "./reducer";
 import accessTokenReducer from "./accessTokenReducer";
 import {thunk} from "redux-thunk";
+import loginCheckReducer from "./loginCheckReducer";
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["reducer", "accessTokenReducer"],
+    whitelist: ["reducer", "accessTokenReducer", "loginCheckReducer"],
 };
 
 export const rootReducer = combineReducers({
     reducer: reducer,
     accessTokenReducer: accessTokenReducer,
+    loginCheckReducer: loginCheckReducer,
 
 });
 

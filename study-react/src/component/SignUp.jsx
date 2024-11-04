@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import './signUp.css';
-import axios from "axios";
 import {useDebounce, useInputLengthSlicer} from "../util";
+import {onceApi} from "../auth/axiosIntercepter";
 
 function SignUp() {
 
@@ -66,7 +66,7 @@ function SignUp() {
             return;
         }
 
-        return axios.get('http://localhost:9003/v1/signUp', {
+        return onceApi.get('/v1/signUp', {
             params: {
                 email: email,
                 password: password,
