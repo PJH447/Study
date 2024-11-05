@@ -30,7 +30,7 @@ a {
 
 .App-header {
   background-color: #282c34;
-  min-height: 20vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,7 +41,7 @@ a {
 
 .App-section {
   background-color: #bf8bff;
-  min-height: 70vh;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;

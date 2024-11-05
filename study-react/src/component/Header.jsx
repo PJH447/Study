@@ -33,9 +33,6 @@ function Header() {
 
     return <>
         <header className="App-header">
-            <p>
-                Edit <code>src/App.js</code> and save to reload.
-            </p>
             <div className={"app-head"}>
                 <AuthButton userInfo={userInfo} onLogout={handleLogout}/>
             </div>
