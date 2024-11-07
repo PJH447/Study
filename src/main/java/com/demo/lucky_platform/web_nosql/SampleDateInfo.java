@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "nosql_test_collection")
+@Document(collection = "nosql_test_collection")
 @ToString
 @Getter
 @Builder
@@ -23,4 +23,6 @@ public class SampleDateInfo {
     private String email;
 
     private String address;
+
+    private Integer count;
 }
