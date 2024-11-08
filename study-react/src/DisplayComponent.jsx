@@ -31,6 +31,13 @@ function DisplayComponent() {
 
     console.log(accessToken);
 
+    const [names, setNames] = useState([
+        { id: 1, text: "눈사람" },
+        { id: 2, text: "얼음" },
+        { id: 3, text: "눈" },
+        { id: 4, text: "바람" },
+    ]);
+
     return (
         <>
             <button onClick={toggleVisibility}>visible button</button>
@@ -39,7 +46,8 @@ function DisplayComponent() {
             <p style={{color: color}}>target2</p>
             <br/>
             <div>
-            {/*{count}*/}
+                {names.map(name => <div>{name.id} hi {name.text}</div>)}
+                {/*{count}*/}
             </div>
         </>
     );

@@ -1,6 +1,5 @@
-
-export const SET = "AccessTokenReducer/SET"
-export const DEL = "AccessTokenReducer/DEL"
+export const SET = "accessTokenReducer/SET"
+export const DEL = "accessTokenReducer/DEL"
 
 const initialState = {
     accessToken: "",

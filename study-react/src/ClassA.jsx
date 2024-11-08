@@ -1,8 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import axios from "axios";
 import {login, logout, reissue} from "./auth/auth";
+import {authenticatedApi} from "./auth/axiosIntercepter";
+import {useSelector} from "react-redux";
 
 function ClassA() {
+
+    const {isLogin, nickname} = useSelector(state => state.loginCheckReducer);
+    console.log(isLogin, nickname);
 
     const inputName = useRef(null); // Use null for initial value
     const inputPassword = useRef(null);
@@ -27,22 +31,38 @@ function ClassA() {
         logout();
     };
 
+    // const getTest = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:9003/api/test/v2', {
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             withCredentials: true,
+    //         });
+    //
+    //         if (response.status === 200) {
+    //             console.log("success");
+    //         }
+    //
+    //     } catch (error) {
+    //         console.log("Error:", error);
+    //     }
+    // };
+
     const getTest = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:9003/api/test/v2', {
+        return authenticatedApi.get('http://127.0.0.1:9003/api/test/v2', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 withCredentials: true,
-            });
-
-            if (response.status === 200) {
-                console.log("success");
-            }
-
-        } catch (error) {
-            console.log("Error:", error);
-        }
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log("success");
+                }
+            }).catch(error=>{
+                console.log("Error:", error);
+            })
     };
 
     const [items, setItems] = useState([])
