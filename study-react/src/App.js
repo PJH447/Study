@@ -6,6 +6,7 @@ import Login from "./component/Login";
 import Header from "./component/Header";
 import Navigation from "./component/Navigation";
 import SignUp from "./component/SignUp";
+import Chat from "./component/Chat";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                         <Route path='/hi2' element={<DisplayComponent/>}/>
                         <Route path='/login' element={<Login/>}/>
                         <Route path='/signUp' element={<SignUp/>}/>
+                        <Route path='/chat-test' element={<Chat/>}/>
                     </Routes>
                 </section>
                 <Navigation/>
