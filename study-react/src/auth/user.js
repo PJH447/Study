@@ -9,9 +9,7 @@ export const getUserInfo = () => {
             console.log(response);
             if (response.status === 200) {
                 console.log('success');
-                const userInfoForm = {
-                    nickname: response.data.data.nickname,
-                }
+                const userInfoForm = response.data.data;
                 dispatch(setLoginInfo(userInfoForm));
                 setUserInfo(userInfoForm);
                 return userInfoForm;

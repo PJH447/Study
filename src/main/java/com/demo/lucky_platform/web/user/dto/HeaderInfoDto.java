@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class HeaderInfoDto {
 
+    private Long userId;
     private String email;
     private String name;
     private String nickname;
@@ -18,6 +19,7 @@ public class HeaderInfoDto {
 
     public static HeaderInfoDto from(User user) {
         return HeaderInfoDto.builder()
+                            .userId(user.getId())
                             .email(user.getEmail())
                             .name(user.getName())
                             .nickname(user.getNickname())

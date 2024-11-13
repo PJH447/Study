@@ -1,10 +1,11 @@
 package com.demo.lucky_platform.web.chat.service;
 
 import com.demo.lucky_platform.web.chat.domain.Chat;
-import com.demo.lucky_platform.web.chat.domain.ChatRoom;
 import com.demo.lucky_platform.web.chat.dto.ChatMessageDto;
+import com.demo.lucky_platform.web.chat.dto.CreateChatRequest;
 import com.demo.lucky_platform.web.chat.repository.ChatRepository;
-import com.demo.lucky_platform.web.chat.repository.ChatRoomRepository;
+import com.demo.lucky_platform.web.user.domain.User;
+import com.demo.lucky_platform.web.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,27 +13,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ChatServiceImpl implements ChatService{
+public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
-    private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public Long createChat(Long roomId, ChatMessageDto chatMessageDto) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                                               .orElseGet(() ->
-                                                       chatRoomRepository.save(ChatRoom.builder()
-                                                                                       .name("new ChatRoom")
-                                                                                       .build())
-                                               );
+    public ChatMessageDto createChat(final Long targetUserId, final CreateChatRequest createChatRequest) {
+        User sender = userRepository.findByEmailAndEnabledIsTrue(createChatRequest.senderEmail())
+                                    .orElseThrow(RuntimeException::new);
 
         Chat chat = Chat.builder()
-                         .chatRoom(chatRoom)
-                         .sender(chatMessageDto.getSender())
-                         .senderEmail(chatMessageDto.getSenderEmail())
-                         .message(chatMessageDto.getMessage())
-                         .build();
-        return chatRepository.save(chat).getId();
+                        .senderId(sender.getId())
+                        .message(createChatRequest.message())
+                        .targetUserId(targetUserId)
+                        .build();
+        Chat _chat = chatRepository.save(chat);
+
+        return ChatMessageDto.builder()
+                             .chatId(_chat.getId())
+                             .senderNickname(sender.getNickname())
+                             .message(_chat.getMessage())
+                             .createdAt(_chat.getCreatedAt())
+                             .build();
     }
 }

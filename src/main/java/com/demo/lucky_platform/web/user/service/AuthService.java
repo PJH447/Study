@@ -10,5 +10,6 @@ public interface AuthService {
     void login(LoginForm loginForm, HttpServletResponse response);
     void reissueAccessToken(HttpServletRequest request, HttpServletResponse response);
     void logout(HttpServletRequest request, HttpServletResponse response);
+    void setAuthorizationHeader(HttpServletRequest request, HttpServletResponse response);
 
 }

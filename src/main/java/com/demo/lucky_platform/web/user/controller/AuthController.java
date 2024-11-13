@@ -48,4 +48,15 @@ public class AuthController {
         authService.logout(request, response);
         return CommonResponse.createVoidResponse();
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/v1/socket")
+    public CommonResponse createAuthorizationHeader(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        authService.setAuthorizationHeader(request, response);
+        return CommonResponse.createVoidResponse();
+    }
 }

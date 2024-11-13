@@ -1,15 +1,20 @@
 package com.demo.lucky_platform.config.other;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final StompPreHandler stompPreHandler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -27,7 +32,12 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/send")
+                .setUserDestinationPrefix("/user")
                 .enableSimpleBroker("/topic", "/queue");
     }
 
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompPreHandler);
+    }
 }

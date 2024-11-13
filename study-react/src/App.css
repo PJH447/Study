@@ -78,7 +78,7 @@ a {
 }
 
 .blind {
-  display: none;
+  display: none !important;
 }
 
 div.app-head {

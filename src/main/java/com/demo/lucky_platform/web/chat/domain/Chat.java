@@ -18,16 +18,15 @@ public class Chat extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_room_id")
-    private ChatRoom chatRoom;
+    @Column(name = "sender_id", columnDefinition = "bigint(20)")
+    private Long senderId;
 
-    @Column(name = "sender",columnDefinition = "varchar(20)")
-    private String sender;
-
-    @Column(name = "senderEmail",columnDefinition = "varchar(20)")
+    @Column(name = "sender_email", columnDefinition = "varchar(20)")
     private String senderEmail;
 
-    @Column(name = "message",columnDefinition = "text")
+    @Column(name = "message", columnDefinition = "text")
     private String message;
+
+    @Column(name = "target_user_id", columnDefinition = "bigint(20)")
+    private Long targetUserId;
 }
