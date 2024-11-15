@@ -1,6 +1,7 @@
 package com.demo.lucky_platform.web.chat.domain;
 
 import com.demo.lucky_platform.web.common.domain.BaseEntity;
+import com.demo.lucky_platform.web.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,15 +19,19 @@ public class Chat extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sender_id", columnDefinition = "bigint(20)")
-    private Long senderId;
-
-    @Column(name = "sender_email", columnDefinition = "varchar(20)")
-    private String senderEmail;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "message", columnDefinition = "text")
     private String message;
 
     @Column(name = "target_user_id", columnDefinition = "bigint(20)")
     private Long targetUserId;
+
+    public void validateEmptyMessage() {
+        if (this.message.isBlank()) {
+            throw new RuntimeException("메세지가 비어있음");
+        }
+    }
 }

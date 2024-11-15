@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import SockJS from 'sockjs-client';
 import {Stomp} from "@stomp/stompjs";
 import {authenticatedApi} from "../auth/axiosIntercepter";
@@ -8,11 +8,32 @@ import {useSelector} from "react-redux";
 function Chat() {
     const {isLogin, nickname, userId, email} = useSelector(state => state.loginCheckReducer);
     const [targetUserId, setTargetUserId] = useState(userId);
+    const [oldMessage, setOldMessage] = useState([]);
     const [message, setMessage] = useState([]);
     const text = useRef(null);
     const client = useRef(null);
 
-    const [chatLog, setChatLog] = useState([]);
+    useEffect(() => {
+        authenticatedApi.get('/api/v1/chat',
+            {
+                params: {
+                    targetUserId: targetUserId,
+                }
+            })
+            .then(response => {
+                console.log(response.data.data.content)
+                if (response.status === 200) {
+                    console.log('success');
+                    setOldMessage(response.data.data.content);
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
+
+
 
     const connectHandler = () => {
 
@@ -100,7 +121,7 @@ function Chat() {
     };
 
     const getMessage = () => {
-        console.log(message);
+        console.log(oldMessage);
     };
 
     function getClassNames(message) {
@@ -110,6 +131,10 @@ function Chat() {
     return <>
         <button type={"button"} onClick={connectHandler}>소켓 연결</button>
         <div>
+            {oldMessage.map(
+                m => <div
+                    className={`chat-log ${getClassNames(m.message)}`}>{m.chatId} / {m.senderNickname} / {m.message} / {m.createdAt}</div>
+            )}
             {message.map(
                 m => <div
                     className={`chat-log ${getClassNames(m.message)}`}>{m.chatId} / {m.senderNickname} / {m.message} / {m.createdAt}</div>
@@ -118,6 +143,7 @@ function Chat() {
         <input type={"text"} ref={text}/>
         <button type={"button"} onClick={sendHandler}>송신</button>
         <button type={"button"} onClick={exitHandler}>나가기</button>
+        <button type={"button"} onClick={getMessage}>adfssadf</button>
     </>;
 }
 

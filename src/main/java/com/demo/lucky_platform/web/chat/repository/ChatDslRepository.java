@@ -1,9 +1,11 @@
 package com.demo.lucky_platform.web.chat.repository;
 
 import com.demo.lucky_platform.web.chat.domain.Chat;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChatRepository extends JpaRepository<Chat, Long>, ChatDslRepository {
+public interface ChatDslRepository {
+
+    Slice<Chat> findRecentChat(Long targetUserId, Pageable pageable);
 
 }

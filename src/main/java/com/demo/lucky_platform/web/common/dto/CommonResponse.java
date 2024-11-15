@@ -2,6 +2,7 @@ package com.demo.lucky_platform.web.common.dto;
 
 import lombok.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class CommonResponse<T> {
         ERROR,
         SINGLE,
         LIST,
+        SLICE,
         PAGE,
         NO_CONTENT
         ;
@@ -56,6 +58,8 @@ public class CommonResponse<T> {
                 return LIST;
             } else if (data instanceof Page) {
                 return PAGE;
+            } else if (data instanceof Slice<?>) {
+                return SLICE;
             } else {
                 return SINGLE;
             }
