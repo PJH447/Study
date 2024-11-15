@@ -2,7 +2,7 @@ import axios from "axios";
 import {reissue} from "./auth";
 
 export const onceApi = axios.create({
-    baseURL: 'http://127.0.0.1:9003',
+    baseURL: 'http://localhost:9003',
     timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export const onceApi = axios.create({
 })
 
 export const authenticatedApi = axios.create({
-    baseURL: 'http://127.0.0.1:9003',
+    baseURL: 'http://localhost:9003',
     timeout: 5000,
     headers: {
         'Content-Type': 'application/json',

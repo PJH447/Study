@@ -50,7 +50,7 @@ function ClassA() {
     // };
 
     const getTest = async () => {
-        return authenticatedApi.get('http://127.0.0.1:9003/api/test/v2', {
+        return authenticatedApi.get('http://localhost:9003/api/test/v2', {
                 headers: {
                     'Content-Type': 'application/json',
                 },
