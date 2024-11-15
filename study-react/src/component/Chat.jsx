@@ -16,7 +16,7 @@ function Chat() {
 
     const connectHandler = () => {
 
-        if (client.current) {
+        if (client.current?.connected) {
             console.log('already connected')
             return;
         }
@@ -34,13 +34,21 @@ function Chat() {
                     },
                     () => {
                         client.current.subscribe(
-                            `/topic/${targetUserId}`,
+                            `/exchange/chat.exchange/*.user.${targetUserId}`,
+                            // `/queue/chat.queue`,
                             (newMessage) => {
                                 setMessage(preMessages => [...preMessages, JSON.parse(newMessage.body)]);
                             },
                             {
                                 // header
                             }
+                        );
+
+                        client.current.send(
+                            `/send/enter.${targetUserId}`,
+                            {
+                                // header
+                            },
                         );
                     }
                 );
@@ -51,8 +59,14 @@ function Chat() {
     }
 
     const sendHandler = () => {
+
+        if (!client.current?.connected) {
+            console.log('disconnected')
+            return;
+        }
+
         client.current.send(
-            `/send/${targetUserId}`,
+            `/send/talk.${targetUserId}`,
             {
                 // header
             },
@@ -61,6 +75,28 @@ function Chat() {
                 message: text.current.value
             })
         );
+    };
+
+    const exitHandler = () => {
+
+        if (!client.current?.connected) {
+            console.log('disconnected')
+            return;
+        }
+
+        client.current.send(
+            `/send/exit.${targetUserId}`,
+            {
+                // header
+            },
+            JSON.stringify({
+
+            }),
+            () =>{
+                console.log("Exit message sent");
+            }
+        );
+        client.current?.deactivate();
     };
 
     const getMessage = () => {
@@ -81,7 +117,7 @@ function Chat() {
         </div>
         <input type={"text"} ref={text}/>
         <button type={"button"} onClick={sendHandler}>송신</button>
-        <button type={"button"} onClick={getMessage}>메세지 출력</button>
+        <button type={"button"} onClick={exitHandler}>나가기</button>
     </>;
 }
 

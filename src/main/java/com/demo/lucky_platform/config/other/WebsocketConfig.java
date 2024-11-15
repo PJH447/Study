@@ -5,9 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompReactorNettyCodec;
+import org.springframework.messaging.tcp.reactor.ReactorNettyTcpClient;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+import reactor.netty.tcp.SslProvider;
+import reactor.netty.tcp.TcpClient;
 
 @RequiredArgsConstructor
 @Configuration
@@ -19,8 +24,6 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/webSocket")
-                .setHandshakeHandler(new DefaultHandshakeHandler()) // default
-                .addInterceptors(new HttpSessionHandshakeInterceptor()) // default
                 .setAllowedOrigins("http://localhost:3000")
                 .withSockJS()
                 .setHeartbeatTime(30)
@@ -32,8 +35,8 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/send")
-                .setUserDestinationPrefix("/user")
-                .enableSimpleBroker("/topic", "/queue");
+                .setPathMatcher(new AntPathMatcher("."))
+                .enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue");
     }
 
     @Override

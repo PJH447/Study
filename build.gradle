@@ -83,6 +83,9 @@ dependencies {
 	// stomp
 	implementation 'org.webjars:stomp-websocket:2.3.4'
 
+	// rabbitMQ
+	implementation "org.springframework.boot:spring-boot-starter-reactor-netty"
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
 }
 
