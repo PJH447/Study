@@ -1,7 +1,6 @@
 package com.demo.lucky_platform.web.chat.repository;
 
 import com.demo.lucky_platform.web.chat.domain.Chat;
-import com.demo.lucky_platform.web.user.domain.QUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

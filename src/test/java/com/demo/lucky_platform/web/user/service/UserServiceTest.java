@@ -184,7 +184,7 @@ class UserServiceTest {
     class EditNicknameTest {
 
         @Test
-        @DisplayName("")
+        @DisplayName("성공 테스트")
         void 성공() {
 
             //given
