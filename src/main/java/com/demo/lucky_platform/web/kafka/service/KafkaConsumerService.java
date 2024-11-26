@@ -9,7 +9,12 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "my-topic", groupId = "group-id-temp")
     public void consume(String message) {
-        System.out.println("receive message : " + message);
+        System.out.println("receive message 1 : " + message);
+    }
+
+    @KafkaListener(topics = "my-topic", groupId = "group-id-temp-2")
+    public void consume2(String message) {
+        System.out.println("receive message 2 : " + message);
     }
 
 }
