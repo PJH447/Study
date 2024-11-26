@@ -7,12 +7,12 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Profile;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @DisplayName("Redis Test Containers")
-@ActiveProfiles("test")
+@Profile("test")
 @Configuration
 public class RedisTestContainer {
 

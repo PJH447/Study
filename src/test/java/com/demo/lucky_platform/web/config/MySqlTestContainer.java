@@ -2,13 +2,13 @@ package com.demo.lucky_platform.web.config;
 
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Profile;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 
 @DisplayName("MySql Test Containers")
-@ActiveProfiles("test")
+@Profile("test")
 @Configuration
 public class MySqlTestContainer {
 
