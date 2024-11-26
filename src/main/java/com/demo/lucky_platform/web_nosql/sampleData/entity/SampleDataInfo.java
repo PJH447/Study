@@ -1,4 +1,4 @@
-package com.demo.lucky_platform.web_nosql;
+package com.demo.lucky_platform.web_nosql.sampleData.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SampleDateInfo {
+public class SampleDataInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
