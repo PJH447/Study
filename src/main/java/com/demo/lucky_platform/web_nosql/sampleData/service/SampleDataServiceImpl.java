@@ -25,6 +25,7 @@ public class SampleDataServiceImpl implements SampleDataService {
         sampleDataRepository.save(sampleDateInfo);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SampleDataInfo findById(final String id) {
         return sampleDataRepository.findById(id)
