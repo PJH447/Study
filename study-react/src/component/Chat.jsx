@@ -33,8 +33,6 @@ function Chat() {
             });
     }, []);
 
-
-
     const connectHandler = () => {
 
         if (client.current?.connected) {
@@ -77,9 +75,11 @@ function Chat() {
             console.log(error);
 
         });
-    }
+    };
 
-    connectHandler();
+    useEffect(() => {
+        connectHandler();
+    }, []);
 
     const sendHandler = () => {
 
