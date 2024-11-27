@@ -1,5 +1,17 @@
 .chat-box {
     width: 90%;
+    min-height: 75vh;
+    max-height: 75vh;
+    overflow: scroll;
+}
+
+.chat-box::-webkit-scrollbar {
+    display: none;
+}
+
+.input-util-box {
+    min-height: 5vh;
+    max-height: 5vh;
 }
 
 .notice-chat {

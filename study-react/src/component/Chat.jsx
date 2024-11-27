@@ -12,6 +12,12 @@ function Chat() {
     const [message, setMessage] = useState([]);
     const text = useRef(null);
     const client = useRef(null);
+    const messageEndRef = useRef(null);
+
+    useEffect(() => {
+        messageEndRef.current.scrollIntoView({behavior: 'smooth'})
+
+    }, [message]);
 
     useEffect(() => {
         authenticatedApi.get('/api/v1/chat',
@@ -163,10 +169,13 @@ function Chat() {
                         <span>{m.message}</span>
                     </div>
             )}
+            <div ref={messageEndRef}></div>
         </div>
-        <input type={"text"} ref={text} onKeyDown={pressEnter}/>
-        <button type={"button"} onClick={sendHandler}>송신</button>
-        <button type={"button"} onClick={exitHandler}>나가기</button>
+        <div className={'input-util-box'}>
+            <input type={"text"} ref={text} onKeyDown={pressEnter}/>
+            <button type={"button"} onClick={sendHandler}>송신</button>
+            <button type={"button"} onClick={exitHandler}>나가기</button>
+        </div>
     </>;
 }
 
