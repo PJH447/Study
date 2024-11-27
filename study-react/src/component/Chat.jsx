@@ -79,10 +79,17 @@ function Chat() {
         });
     }
 
+    connectHandler();
+
     const sendHandler = () => {
 
         if (!client.current?.connected) {
             console.log('disconnected')
+            return;
+        }
+
+        const inputValue = text.current.value;
+        if (inputValue.trim() === '') {
             return;
         }
 
@@ -93,9 +100,10 @@ function Chat() {
             },
             JSON.stringify({
                 senderEmail: email,
-                message: text.current.value
+                message: inputValue
             })
         );
+        text.current.value = '';
     };
 
     const exitHandler = () => {
@@ -120,16 +128,22 @@ function Chat() {
         client.current?.deactivate();
     };
 
-    const getMessage = () => {
-        console.log(oldMessage);
-    };
-
     function getClassNames(message) {
         return message === 'hi' ? 'blind' : '';
     }
 
+    const pressEnter = (e)=>{
+        e.stopPropagation();
+
+        if (e.key === 'Enter') {
+
+            if (e.nativeEvent.isComposing) {
+                return; // 구성 중일 때는 이벤트 무시
+            }
+            sendHandler();
+        }
+    }
     return <>
-        <button type={"button"} onClick={connectHandler}>소켓 연결</button>
         <div>
             {oldMessage.map(
                 m => <div
@@ -140,10 +154,9 @@ function Chat() {
                     className={`chat-log ${getClassNames(m.message)}`}>{m.chatId} / {m.senderNickname} / {m.message} / {m.createdAt}</div>
             )}
         </div>
-        <input type={"text"} ref={text}/>
+        <input type={"text"} ref={text} onKeyDown={pressEnter}/>
         <button type={"button"} onClick={sendHandler}>송신</button>
         <button type={"button"} onClick={exitHandler}>나가기</button>
-        <button type={"button"} onClick={getMessage}>adfssadf</button>
     </>;
 }
 
