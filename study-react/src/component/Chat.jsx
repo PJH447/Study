@@ -128,9 +128,11 @@ function Chat() {
         client.current?.deactivate();
     };
 
-    function getClassNames(message) {
-        return '';
-        // return message === 'hi' ? 'blind' : '';
+    function getClassNames(senderId, isNotice) {
+        if (isNotice) {
+            return 'notice-chat'
+        }
+        return senderId === userId ? 'my-chat' : 'other-user-chat';
     }
 
     const pressEnter = (e)=>{
@@ -139,26 +141,26 @@ function Chat() {
         if (e.key === 'Enter') {
 
             if (e.nativeEvent.isComposing) {
-                return; // 구성 중일 때는 이벤트 무시
+                return;
             }
             sendHandler();
         }
     }
 
     return <>
-        <div>
+        <div className={'chat-box'}>
             {oldMessage.map(
                 m =>
-                    <div className={`chat-log ${getClassNames(m.message)}`}>
-                        {m.chatId} -  {m.senderNickname} <br/>
-                        {m.message}
+                    <div className={`chat-log ${getClassNames(m.senderId, m.isNotice)}`} data-chat-id={m.chatId}>
+                        <span>{m.senderNickname}</span>
+                        <span>{m.message}</span>
                     </div>
             )}
             {message.map(
                 m =>
-                    <div className={`chat-log ${getClassNames(m.message)}`}>
-                        {m.chatId} -  {m.senderNickname} <br/>
-                        {m.message}
+                    <div className={`chat-log ${getClassNames(m.senderId, m.isNotice)}`} data-chat-id={m.chatId}>
+                        <span>{m.senderNickname}</span>
+                        <span>{m.message}</span>
                     </div>
             )}
         </div>
