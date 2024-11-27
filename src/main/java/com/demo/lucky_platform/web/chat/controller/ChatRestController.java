@@ -50,6 +50,7 @@ public class ChatRestController {
         log.info("enter");
         ChatMessageDto enter = ChatMessageDto.builder()
                                              .message("enter")
+                                             .isNotice(true)
                                              .build();
 
         rabbitTemplate.convertAndSend(exchangeName, "enter.user." + targetUserId, enter);
@@ -59,8 +60,9 @@ public class ChatRestController {
     public void exit(@DestinationVariable Long targetUserId) {
         log.info("exit");
         ChatMessageDto exit = ChatMessageDto.builder()
-                                             .message("exit")
-                                             .build();
+                                            .message("exit")
+                                            .isNotice(true)
+                                            .build();
 
         rabbitTemplate.convertAndSend(exchangeName, "exit.user." + targetUserId, exit);
     }

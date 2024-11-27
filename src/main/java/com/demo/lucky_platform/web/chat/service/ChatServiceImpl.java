@@ -45,9 +45,11 @@ public class ChatServiceImpl implements ChatService {
 
         return ChatMessageDto.builder()
                              .chatId(_chat.getId())
+                             .senderId(chat.getUser().getId())
                              .senderNickname(sender.getNickname())
                              .message(_chat.getMessage())
                              .createdAt(_chat.getCreatedAt())
+                             .isNotice(false)
                              .build();
     }
 
@@ -59,9 +61,11 @@ public class ChatServiceImpl implements ChatService {
         List<ChatMessageDto> list = recentChat.stream()
                                               .map(chat -> ChatMessageDto.builder()
                                                                          .chatId(chat.getId())
+                                                                         .senderId(chat.getUser().getId())
                                                                          .senderNickname(chat.getUser().getNickname())
                                                                          .message(chat.getMessage())
                                                                          .createdAt(chat.getCreatedAt())
+                                                                         .isNotice(false)
                                                                          .build()
                                               )
                                               .collect(Collectors.toList());

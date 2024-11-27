@@ -1,4 +1,28 @@
+.chat-box {
+    width: 90%;
+}
+
+.notice-chat {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: center;
+}
+
+.other-user-chat {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.my-chat {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+}
 
 .chat-log {
-    background-color: #67ffd5;
+    /*background-color: #198754;*/
 }

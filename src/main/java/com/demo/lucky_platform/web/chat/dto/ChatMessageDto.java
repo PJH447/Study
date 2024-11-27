@@ -7,8 +7,10 @@ import java.time.LocalDateTime;
 public record ChatMessageDto(
         Long chatId,
         String message,
+        Long senderId,
         String senderNickname,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Boolean isNotice
 ) {
 
 }
