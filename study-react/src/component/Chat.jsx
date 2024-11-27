@@ -129,7 +129,8 @@ function Chat() {
     };
 
     function getClassNames(message) {
-        return message === 'hi' ? 'blind' : '';
+        return '';
+        // return message === 'hi' ? 'blind' : '';
     }
 
     const pressEnter = (e)=>{
@@ -143,15 +144,22 @@ function Chat() {
             sendHandler();
         }
     }
+
     return <>
         <div>
             {oldMessage.map(
-                m => <div
-                    className={`chat-log ${getClassNames(m.message)}`}>{m.chatId} / {m.senderNickname} / {m.message} / {m.createdAt}</div>
+                m =>
+                    <div className={`chat-log ${getClassNames(m.message)}`}>
+                        {m.chatId} -  {m.senderNickname} <br/>
+                        {m.message}
+                    </div>
             )}
             {message.map(
-                m => <div
-                    className={`chat-log ${getClassNames(m.message)}`}>{m.chatId} / {m.senderNickname} / {m.message} / {m.createdAt}</div>
+                m =>
+                    <div className={`chat-log ${getClassNames(m.message)}`}>
+                        {m.chatId} -  {m.senderNickname} <br/>
+                        {m.message}
+                    </div>
             )}
         </div>
         <input type={"text"} ref={text} onKeyDown={pressEnter}/>
