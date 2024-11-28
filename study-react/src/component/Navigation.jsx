@@ -9,6 +9,7 @@ function Navigation() {
                 <span><Link to='/hi2'>hi2</Link></span>
                 <span><Link to='/signUp'>signUp</Link></span>
                 <span><Link to='/chat-test'>chat</Link></span>
+                <span><Link to='/chat-list'>chatList</Link></span>
             </div>
         </section>
     </>

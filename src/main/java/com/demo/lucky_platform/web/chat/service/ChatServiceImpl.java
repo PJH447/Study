@@ -1,6 +1,7 @@
 package com.demo.lucky_platform.web.chat.service;
 
 import com.demo.lucky_platform.web.chat.domain.Chat;
+import com.demo.lucky_platform.web.chat.dto.ChatListDto;
 import com.demo.lucky_platform.web.chat.dto.ChatMessageDto;
 import com.demo.lucky_platform.web.chat.dto.CreateChatRequest;
 import com.demo.lucky_platform.web.chat.repository.ChatRepository;
@@ -14,10 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +31,13 @@ public class ChatServiceImpl implements ChatService {
     public ChatMessageDto createChat(final Long targetUserId, final CreateChatRequest createChatRequest) {
         User sender = userRepository.findByEmailAndEnabledIsTrue(createChatRequest.senderEmail())
                                     .orElseThrow(RuntimeException::new);
+        User targetUser = userRepository.findById(targetUserId)
+                                  .orElseThrow(RuntimeException::new);
 
         Chat chat = Chat.builder()
                         .user(sender)
                         .message(createChatRequest.message())
-                        .targetUserId(targetUserId)
+                        .targetUser(targetUser)
                         .build();
 
         chat.validateEmptyMessage();
@@ -72,6 +73,23 @@ public class ChatServiceImpl implements ChatService {
         Collections.reverse(list);
 
         return new SliceImpl<>(list, recentChat.getPageable(), recentChat.hasNext());
+    }
+
+    @Override
+    public List<ChatListDto> findLastChatListByUser(Pageable pageable) {
+        List<Chat> chatList = chatRepository.findLastChatListByUser(pageable);
+
+        return chatList.stream()
+                       .map(chat -> {
+                           User user = chat.getTargetUser();
+                           return ChatListDto.builder()
+                                             .chatId(chat.getId())
+                                             .userId(user.getId())
+                                             .userNickname(user.getNickname())
+                                             .message(chat.getMessage())
+                                             .build();
+
+                       }).collect(Collectors.toList());
 
     }
 }

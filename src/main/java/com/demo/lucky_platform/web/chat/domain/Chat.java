@@ -26,8 +26,9 @@ public class Chat extends BaseEntity {
     @Column(name = "message", columnDefinition = "text")
     private String message;
 
-    @Column(name = "target_user_id", columnDefinition = "bigint(20)")
-    private Long targetUserId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_user_id")
+    private User targetUser;
 
     public void validateEmptyMessage() {
         if (this.message.isBlank()) {

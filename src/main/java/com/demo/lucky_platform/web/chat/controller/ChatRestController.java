@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -86,5 +85,14 @@ public class ChatRestController {
             throw new RuntimeException("권한이 없음");
         }
         return CommonResponse.createResponse(chatService.getChatessageSlice(targetUserId, pageable));
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/api/v1/chat/list")
+    public CommonResponse getChatUserList(
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        return CommonResponse.createResponse(chatService.findLastChatListByUser(pageable));
     }
 }

@@ -7,6 +7,7 @@ import Header from "./component/Header";
 import Navigation from "./component/Navigation";
 import SignUp from "./component/SignUp";
 import Chat from "./component/Chat";
+import ChatList from "./component/ChatList";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                         <Route path='/login' element={<Login/>}/>
                         <Route path='/signUp' element={<SignUp/>}/>
                         <Route path='/chat-test' element={<Chat/>}/>
+                        <Route path='/chat-list' element={<ChatList/>}/>
                     </Routes>
                 </section>
                 <Navigation/>

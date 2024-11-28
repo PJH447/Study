@@ -59,3 +59,12 @@ http://localhost:15672
 1. rabbitmq-plugins enable rabbitmq_web_stomp
 2. rabbitmq-plugins enable rabbitmq_web_stomp_examples
 ```
+
+MySql
+-
+only_full_group_by option
+```
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY
+SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));
+SET GLOBAL sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));
+```

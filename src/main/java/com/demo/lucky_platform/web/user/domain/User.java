@@ -62,11 +62,11 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @Builder.Default
-    @Where(clause = "enabled = true")
-    @BatchSize(size = 600)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
-    private List<Favorite> favoriteList = new ArrayList<>();
+//    @Builder.Default
+//    @Where(clause = "enabled = true")
+//    @BatchSize(size = 600)
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+//    private List<Favorite> favoriteList = new ArrayList<>();
 
     public String getEmail() {
         if (ObjectUtils.isEmpty(this.email)) {

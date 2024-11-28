@@ -1,6 +1,7 @@
 package com.demo.lucky_platform.web.chat.repository;
 
 import com.demo.lucky_platform.web.chat.domain.Chat;
+import com.demo.lucky_platform.web.user.domain.QUser;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ public class ChatDslRepositoryImpl implements ChatDslRepository {
                                              .leftJoin(chat.user, user).fetchJoin()
                                              .where(
                                                      chat.enabled.isTrue(),
-                                                     chat.targetUserId.eq(targetUserId)
+                                                     chat.targetUser.id.eq(targetUserId)
                                              )
                                              .orderBy(chat.createdAt.desc())
                                              .offset(pageable.getOffset())
@@ -39,6 +40,28 @@ public class ChatDslRepositoryImpl implements ChatDslRepository {
         }
 
         return new SliceImpl<>(chatList, pageable, hasNext);
+    }
+
+    @Override
+    public List<Chat> findLastChatListByUser(Pageable pageable) {
+        List<Long> targetChatIdList = jpaQueryFactory.select(chat.id.max())
+                                                     .from(chat)
+                                                     .where(chat.enabled.isTrue())
+                                                     .groupBy(chat.targetUser)
+                                                     .fetch();
+
+
+        return jpaQueryFactory.select(chat)
+                              .from(chat)
+                              .leftJoin(chat.targetUser, user).fetchJoin()
+                              .where(
+                                      chat.id.in(targetChatIdList),
+                                      user.enabled.isTrue()
+                              )
+                              .orderBy(chat.createdAt.desc())
+                              .offset(pageable.getOffset())
+                              .limit(pageable.getPageSize())
+                              .fetch();
     }
 
 
