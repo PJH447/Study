@@ -4,15 +4,21 @@ import {Stomp} from "@stomp/stompjs";
 import {authenticatedApi} from "../auth/axiosIntercepter";
 import './chat.css';
 import {useSelector} from "react-redux";
+import {useLocation} from "react-router-dom";
 
 function Chat() {
     const {isLogin, nickname, userId, email} = useSelector(state => state.loginCheckReducer);
-    const [targetUserId, setTargetUserId] = useState(userId);
     const [oldMessage, setOldMessage] = useState([]);
     const [message, setMessage] = useState([]);
     const text = useRef(null);
     const client = useRef(null);
     const messageEndRef = useRef(null);
+    const [pageNumber, setPageNumber] = useState(1)
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const targetUserIdParam = queryParams.get('targetUserId');
+    const [targetUserId, setTargetUserId] = useState(targetUserIdParam ? targetUserIdParam : userId);
 
     useEffect(() => {
         messageEndRef.current.scrollIntoView({behavior: 'smooth'})
@@ -38,6 +44,28 @@ function Chat() {
                 console.log(error);
             });
     }, []);
+
+    const readMore = ()=>{
+        authenticatedApi.get('/api/v1/chat',
+            {
+                params: {
+                    targetUserId: targetUserId,
+                    page: pageNumber,
+                }
+            })
+            .then(response => {
+                console.log(response.data.data.content)
+                if (response.status === 200) {
+                    console.log('success');
+                    setOldMessage([...response.data.data.content, ...oldMessage]);
+                    setPageNumber(pageNumber + 1);
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
     const connectHandler = () => {
 
@@ -175,6 +203,7 @@ function Chat() {
             <input type={"text"} ref={text} onKeyDown={pressEnter}/>
             <button type={"button"} onClick={sendHandler}>송신</button>
             <button type={"button"} onClick={exitHandler}>나가기</button>
+            <button type={"button"} onClick={readMore}>더보기</button>
         </div>
     </>;
 }

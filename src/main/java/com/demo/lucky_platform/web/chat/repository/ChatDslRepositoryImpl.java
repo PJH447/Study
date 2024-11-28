@@ -28,7 +28,7 @@ public class ChatDslRepositoryImpl implements ChatDslRepository {
                                                      chat.enabled.isTrue(),
                                                      chat.targetUser.id.eq(targetUserId)
                                              )
-                                             .orderBy(chat.createdAt.desc())
+                                             .orderBy(chat.id.desc())
                                              .offset(pageable.getOffset())
                                              .limit(pageable.getPageSize() + 1)
                                              .fetch();
