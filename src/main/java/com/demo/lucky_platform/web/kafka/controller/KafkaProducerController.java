@@ -16,7 +16,7 @@ public class KafkaProducerController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/api/v1/kafka/sendMessage")
-    public void sedMessage(@RequestParam("message") String message) {
+    public void sendMessage(@RequestParam("message") String message) {
         kafkaProducerService.sendMessage(message);
     }
 }
