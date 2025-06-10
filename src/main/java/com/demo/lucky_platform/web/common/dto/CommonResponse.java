@@ -19,29 +19,37 @@ public class CommonResponse<T> {
     private ResponseType type;
     private T data;
 
-    public static CommonResponse createErrorResponse(Throwable e) {
-        return CommonResponse.builder()
+    public static <T> CommonResponse<T> createErrorResponse(Throwable e) {
+        return CommonResponse.<T>builder()
                              .success(false)
                              .message(e.getMessage())
                              .type(ResponseType.ERROR)
                              .build();
     }
 
+    public static <T> CommonResponse<T> createErrorResponse(String errorMessage) {
+        return CommonResponse.<T>builder()
+                             .success(false)
+                             .message(errorMessage)
+                             .type(ResponseType.ERROR)
+                             .build();
+    }
+
     public static <T> CommonResponse<T> createVoidResponse() {
-        return (CommonResponse<T>) CommonResponse.builder()
-                                                 .success(true)
-                                                 .message("success")
-                                                 .type(ResponseType.NO_CONTENT)
-                                                 .build();
+        return CommonResponse.<T>builder()
+                             .success(true)
+                             .message("success")
+                             .type(ResponseType.NO_CONTENT)
+                             .build();
     }
 
     public static <T> CommonResponse<T> createResponse(T data) {
-        return (CommonResponse<T>) CommonResponse.builder()
-                                                 .success(true)
-                                                 .message("success")
-                                                 .type(ResponseType.getResponseType(data))
-                                                 .data(data)
-                                                 .build();
+        return CommonResponse.<T>builder()
+                             .success(true)
+                             .message("success")
+                             .type(ResponseType.getResponseType(data))
+                             .data(data)
+                             .build();
     }
 
     public enum ResponseType {
@@ -50,8 +58,7 @@ public class CommonResponse<T> {
         LIST,
         SLICE,
         PAGE,
-        NO_CONTENT
-        ;
+        NO_CONTENT;
 
         public static <T> ResponseType getResponseType(T data) {
             if (data instanceof List) {
