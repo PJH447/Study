@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmailAndEnabledIsTrue(email)
                                   .orElseThrow(RuntimeException::new);
 
-        String _refreshToken = cacheTokenRepository.getData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
+        String _refreshToken = cacheTokenRepository.getString(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
         if (!refreshToken.equals(_refreshToken)) {
             throw new NotFoundRefreshTokenException("올바른 토큰이 아닙니다.");
         }
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
                 String email = jwtTokenProvider.getSubjectByToken(refreshToken);
                 User user = userRepository.findByEmailAndEnabledIsTrue(email)
                                           .orElseThrow(RuntimeException::new);
-                cacheTokenRepository.deleteData(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
+                cacheTokenRepository.delete(REFRESH_TOKEN_CACHE_PREFIX + user.getId());
             });
     }
 
@@ -99,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
 
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
         this.setRefreshToken(refreshToken, response);
-        cacheTokenRepository.setDataAndExpiration(REFRESH_TOKEN_CACHE_PREFIX + user.getId(), refreshToken, jwtRefreshExpirationDateMs);
+        cacheTokenRepository.setStringWithExpiration(REFRESH_TOKEN_CACHE_PREFIX + user.getId(), refreshToken, jwtRefreshExpirationDateMs);
     }
 
     private Optional<Cookie> getCookie(final HttpServletRequest request, final String name) {
