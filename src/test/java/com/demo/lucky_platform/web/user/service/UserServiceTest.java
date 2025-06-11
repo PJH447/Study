@@ -1,5 +1,8 @@
 package com.demo.lucky_platform.web.user.service;
 
+import com.demo.lucky_platform.exception.DuplicateUserException;
+import com.demo.lucky_platform.exception.PhoneCertificationException;
+import com.demo.lucky_platform.exception.UserNotFoundException;
 import com.demo.lucky_platform.web.user.domain.PhoneCertification;
 import com.demo.lucky_platform.web.user.domain.Role;
 import com.demo.lucky_platform.web.user.domain.User;
@@ -117,7 +120,7 @@ class UserServiceTest {
             when(iamportResponseException.getHttpStatusCode()).thenReturn(errorCode);
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
+            assertThrows(PhoneCertificationException.class, () -> userService.signUp(signUpForm));
         }
 
         private static Stream<Arguments> errorCodeStream() {
@@ -140,7 +143,7 @@ class UserServiceTest {
             doThrow(IOException.class).when(iamportClient).certificationByImpUid(any());
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
+            assertThrows(PhoneCertificationException.class, () -> userService.signUp(signUpForm));
         }
 
         @Test
@@ -157,7 +160,7 @@ class UserServiceTest {
             when(certification.getImpUid()).thenReturn("impUid2");
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
+            assertThrows(PhoneCertificationException.class, () -> userService.signUp(signUpForm));
         }
 
         @Test
@@ -176,7 +179,7 @@ class UserServiceTest {
             when(phoneCertificationRepository.findByUniqueKeyAndEnabledIsTrue(any())).thenReturn(Optional.ofNullable(phoneCertification));
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
+            assertThrows(DuplicateUserException.class, () -> userService.signUp(signUpForm));
         }
     }
 
@@ -210,7 +213,7 @@ class UserServiceTest {
             when(userRepository.findByNicknameAndEnabledIsTrue(any())).thenReturn(Optional.ofNullable(user));
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
+            assertThrows(DuplicateUserException.class, () -> userService.editNickname(1L, "newNickname"));
         }
 
         @Test
@@ -224,7 +227,7 @@ class UserServiceTest {
             when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             //then
-            assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
+            assertThrows(UserNotFoundException.class, () -> userService.editNickname(1L, "newNickname"));
         }
 
     }

@@ -1,9 +1,6 @@
 package com.demo.lucky_platform.exception.handler;
 
-import com.demo.lucky_platform.exception.AuthenticationException;
-import com.demo.lucky_platform.exception.DuplicateRequestException;
-import com.demo.lucky_platform.exception.NotFoundRefreshTokenException;
-import com.demo.lucky_platform.exception.ResultNotFoundException;
+import com.demo.lucky_platform.exception.*;
 import com.demo.lucky_platform.web.common.dto.CommonResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +28,7 @@ public class GlobalRestExceptionHandler {
      * Handles duplicate request exceptions.
      *
      * @param req The HTTP request
-     * @param e The exception
+     * @param e   The exception
      * @return A CommonResponse with error details
      */
     @ResponseStatus(code = HttpStatus.OK)
@@ -44,7 +41,7 @@ public class GlobalRestExceptionHandler {
      * Handles resource not found exceptions.
      *
      * @param req The HTTP request
-     * @param e The exception
+     * @param e   The exception
      * @return A CommonResponse with error details
      */
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
@@ -58,7 +55,7 @@ public class GlobalRestExceptionHandler {
      * Handles refresh token not found exceptions.
      *
      * @param req The HTTP request
-     * @param e The exception
+     * @param e   The exception
      * @return A CommonResponse with error details
      */
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
@@ -72,12 +69,68 @@ public class GlobalRestExceptionHandler {
      * Handles authentication exceptions.
      *
      * @param req The HTTP request
-     * @param e The exception
+     * @param e   The exception
      * @return A CommonResponse with error details
      */
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = AuthenticationException.class)
     public CommonResponse handleAuthenticationException(HttpServletRequest req, AuthenticationException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
+
+    /**
+     * Handles duplicate user exceptions.
+     *
+     * @param req The HTTP request
+     * @param e   The exception
+     * @return A CommonResponse with error details
+     */
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = DuplicateUserException.class)
+    public CommonResponse handleDuplicateUserException(HttpServletRequest req, DuplicateUserException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
+
+    /**
+     * Handles invalid password exceptions.
+     *
+     * @param req The HTTP request
+     * @param e   The exception
+     * @return A CommonResponse with error details
+     */
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = InvalidPasswordException.class)
+    public CommonResponse handleInvalidPasswordException(HttpServletRequest req, InvalidPasswordException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
+
+    /**
+     * Handles phone certification exceptions.
+     *
+     * @param req The HTTP request
+     * @param e   The exception
+     * @return A CommonResponse with error details
+     */
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = PhoneCertificationException.class)
+    public CommonResponse handlePhoneCertificationException(HttpServletRequest req, PhoneCertificationException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
+
+    /**
+     * Handles user not found exceptions.
+     *
+     * @param req The HTTP request
+     * @param e   The exception
+     * @return A CommonResponse with error details
+     */
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = UserNotFoundException.class)
+    public CommonResponse handleUserNotFoundException(HttpServletRequest req, UserNotFoundException e) {
         warningLogging(req, e, false);
         return CommonResponse.createErrorResponse(e);
     }
