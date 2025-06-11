@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {login, logout, reissue} from "./auth/auth";
-import {authenticatedApi} from "./auth/axiosIntercepter";
+import {login, logout, reissue} from "../auth/auth";
+import {authenticatedApi} from "../auth/axiosIntercepter";
 import {useSelector} from "react-redux";
+import '../styles/pages/ClassA.css';
 
 function ClassA() {
 

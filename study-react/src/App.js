@@ -1,5 +1,5 @@
 import './App.css';
-import ClassA from "./ClassA";
+import ClassA from "./pages/ClassA";
 import DisplayComponent from "./DisplayComponent";
 import {BrowserRouter as Router, Link, Route, Routes} from 'react-router-dom';
 import Login from "./component/Login";
