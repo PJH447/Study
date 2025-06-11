@@ -1,5 +1,6 @@
 package com.demo.lucky_platform.exception.handler;
 
+import com.demo.lucky_platform.exception.AuthenticationException;
 import com.demo.lucky_platform.exception.DuplicateRequestException;
 import com.demo.lucky_platform.exception.NotFoundRefreshTokenException;
 import com.demo.lucky_platform.exception.ResultNotFoundException;
@@ -15,6 +16,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.demo.lucky_platform.exception.LoggingUtil.warningLogging;
 
+/**
+ * Global exception handler for REST controllers.
+ * Handles various exceptions and returns appropriate responses.
+ */
 @Slf4j
 @Order(GlobalRestExceptionHandler.ORDER)
 @RestControllerAdvice(annotations = RestController.class)
@@ -22,25 +27,58 @@ public class GlobalRestExceptionHandler {
 
     public static final int ORDER = 0;
 
+    /**
+     * Handles duplicate request exceptions.
+     *
+     * @param req The HTTP request
+     * @param e The exception
+     * @return A CommonResponse with error details
+     */
     @ResponseStatus(code = HttpStatus.OK)
     @ExceptionHandler(value = {DuplicateRequestException.class})
-    public CommonResponse h1(HttpServletRequest req, RuntimeException e) {
+    public CommonResponse handleDuplicateRequestException(HttpServletRequest req, DuplicateRequestException e) {
         return CommonResponse.createErrorResponse(e);
     }
 
+    /**
+     * Handles resource not found exceptions.
+     *
+     * @param req The HTTP request
+     * @param e The exception
+     * @return A CommonResponse with error details
+     */
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = ResultNotFoundException.class)
-    public CommonResponse h2(HttpServletRequest req, ResultNotFoundException e) {
+    public CommonResponse handleResultNotFoundException(HttpServletRequest req, ResultNotFoundException e) {
         warningLogging(req, e, false);
         return CommonResponse.createErrorResponse(e);
     }
 
+    /**
+     * Handles refresh token not found exceptions.
+     *
+     * @param req The HTTP request
+     * @param e The exception
+     * @return A CommonResponse with error details
+     */
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = NotFoundRefreshTokenException.class)
-    public CommonResponse h3(HttpServletRequest req, NotFoundRefreshTokenException e) {
+    public CommonResponse handleNotFoundRefreshTokenException(HttpServletRequest req, NotFoundRefreshTokenException e) {
         warningLogging(req, e, false);
         return CommonResponse.createErrorResponse(e);
     }
 
-
+    /**
+     * Handles authentication exceptions.
+     *
+     * @param req The HTTP request
+     * @param e The exception
+     * @return A CommonResponse with error details
+     */
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = AuthenticationException.class)
+    public CommonResponse handleAuthenticationException(HttpServletRequest req, AuthenticationException e) {
+        warningLogging(req, e, false);
+        return CommonResponse.createErrorResponse(e);
+    }
 }
