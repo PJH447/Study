@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         User _user = userRepository.save(user);
 
-//        this.phoneCertificate(_user, signUpForm.impUid());
+        this.phoneCertificate(_user, signUpForm.impUid());
     }
 
     @Transactional

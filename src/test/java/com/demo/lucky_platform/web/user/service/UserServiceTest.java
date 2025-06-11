@@ -11,17 +11,19 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.Certification;
 import com.siot.IamportRestClient.response.IamportResponse;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -33,21 +35,20 @@ import static org.mockito.Mockito.*;
 
 
 @ActiveProfiles({"test"})
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @Autowired
-    UserService userService;
-    @Autowired
+    @InjectMocks
+    UserServiceImpl userService;
+    @Mock
     BCryptPasswordEncoder bCryptPasswordEncoder;
-    @MockBean
+    @Mock
     UserRepository userRepository;
-    @MockBean
+    @Mock
     RoleRepository roleRepository;
-    @MockBean
+    @Mock
     IamportClient iamportClient;
-    @MockBean
+    @Mock
     PhoneCertificationRepository phoneCertificationRepository;
 
     @Mock
@@ -85,13 +86,13 @@ class UserServiceTest {
         void 성공() throws IamportResponseException, IOException {
 
             //given
-            doReturn(user).when(userRepository).save(any());
-            doReturn(role).when(roleRepository).findByAuthority(any());
-            doReturn(iamportResponse).when(iamportClient).certificationByImpUid(any());
-            doReturn(certification).when(iamportResponse).getResponse();
-            doReturn(impUid).when(certification).getImpUid();
-            doReturn("uniqueKey").when(certification).getUniqueKey();
-            doReturn(Optional.empty()).when(phoneCertificationRepository).findByUniqueKeyAndEnabledIsTrue(any());
+            when(userRepository.save(any())).thenReturn(user);
+            when(roleRepository.findByAuthority(any())).thenReturn(role);
+            when(iamportClient.certificationByImpUid(any())).thenReturn(iamportResponse);
+            when(iamportResponse.getResponse()).thenReturn(certification);
+            when(certification.getImpUid()).thenReturn(impUid);
+            when(certification.getUniqueKey()).thenReturn("uniqueKey");
+            when(phoneCertificationRepository.findByUniqueKeyAndEnabledIsTrue(any())).thenReturn(Optional.empty());
 
             //when
             userService.signUp(signUpForm);
@@ -107,13 +108,13 @@ class UserServiceTest {
         void 실패1(int errorCode, String message) throws IamportResponseException, IOException {
 
             //given
-            doReturn(user).when(userRepository).save(any());
-            doReturn(role).when(roleRepository).findByAuthority(any());
+            when(userRepository.save(any())).thenReturn(user);
+            when(roleRepository.findByAuthority(any())).thenReturn(role);
             doThrow(iamportResponseException).when(iamportClient).certificationByImpUid(any());
-            doReturn("error!!!").when(iamportResponseException).getMessage();
+            when(iamportResponseException.getMessage()).thenReturn("error!!!");
 
             //when
-            doReturn(errorCode).when(iamportResponseException).getHttpStatusCode();
+            when(iamportResponseException.getHttpStatusCode()).thenReturn(errorCode);
 
             //then
             assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
@@ -132,8 +133,8 @@ class UserServiceTest {
         void 실패2() throws IamportResponseException, IOException {
 
             //given
-            doReturn(user).when(userRepository).save(any());
-            doReturn(role).when(roleRepository).findByAuthority(any());
+            when(userRepository.save(any())).thenReturn(user);
+            when(roleRepository.findByAuthority(any())).thenReturn(role);
 
             //when
             doThrow(IOException.class).when(iamportClient).certificationByImpUid(any());
@@ -147,13 +148,13 @@ class UserServiceTest {
         void 실패3() throws IamportResponseException, IOException {
 
             //given
-            doReturn(user).when(userRepository).save(any());
-            doReturn(role).when(roleRepository).findByAuthority(any());
-            doReturn(iamportResponse).when(iamportClient).certificationByImpUid(any());
-            doReturn(certification).when(iamportResponse).getResponse();
+            when(userRepository.save(any())).thenReturn(user);
+            when(roleRepository.findByAuthority(any())).thenReturn(role);
+            when(iamportClient.certificationByImpUid(any())).thenReturn(iamportResponse);
+            when(iamportResponse.getResponse()).thenReturn(certification);
 
             //when
-            doReturn("impUid2").when(certification).getImpUid();
+            when(certification.getImpUid()).thenReturn("impUid2");
 
             //then
             assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
@@ -164,15 +165,15 @@ class UserServiceTest {
         void 실패4() throws IamportResponseException, IOException {
 
             //given
-            doReturn(user).when(userRepository).save(any());
-            doReturn(role).when(roleRepository).findByAuthority(any());
-            doReturn(iamportResponse).when(iamportClient).certificationByImpUid(any());
-            doReturn(certification).when(iamportResponse).getResponse();
-            doReturn(impUid).when(certification).getImpUid();
-            doReturn("uniqueKey").when(certification).getUniqueKey();
+            when(userRepository.save(any())).thenReturn(user);
+            when(roleRepository.findByAuthority(any())).thenReturn(role);
+            when(iamportClient.certificationByImpUid(any())).thenReturn(iamportResponse);
+            when(iamportResponse.getResponse()).thenReturn(certification);
+            when(certification.getImpUid()).thenReturn(impUid);
+            when(certification.getUniqueKey()).thenReturn("uniqueKey");
 
             //when
-            doReturn(Optional.ofNullable(phoneCertification)).when(phoneCertificationRepository).findByUniqueKeyAndEnabledIsTrue(any());
+            when(phoneCertificationRepository.findByUniqueKeyAndEnabledIsTrue(any())).thenReturn(Optional.ofNullable(phoneCertification));
 
             //then
             assertThrows(RuntimeException.class, () -> userService.signUp(signUpForm));
@@ -188,8 +189,8 @@ class UserServiceTest {
         void 성공() {
 
             //given
-            doReturn(Optional.empty()).when(userRepository).findByNicknameAndEnabledIsTrue(any());
-            doReturn(Optional.ofNullable(user)).when(userRepository).findById(any());
+            when(userRepository.findByNicknameAndEnabledIsTrue(any())).thenReturn(Optional.empty());
+            when(userRepository.findById(any())).thenReturn(Optional.ofNullable(user));
 
             //when
             userService.editNickname(1L, "newNickname");
@@ -206,7 +207,7 @@ class UserServiceTest {
             //given
 
             //when
-            doReturn(Optional.ofNullable(user)).when(userRepository).findByNicknameAndEnabledIsTrue(any());
+            when(userRepository.findByNicknameAndEnabledIsTrue(any())).thenReturn(Optional.ofNullable(user));
 
             //then
             assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
@@ -217,10 +218,10 @@ class UserServiceTest {
         void 실패2() {
 
             //given
-            doReturn(Optional.empty()).when(userRepository).findByNicknameAndEnabledIsTrue(any());
+            when(userRepository.findByNicknameAndEnabledIsTrue(any())).thenReturn(Optional.empty());
 
             //when
-            doReturn(Optional.empty()).when(userRepository).findById(any());
+            when(userRepository.findById(any())).thenReturn(Optional.empty());
 
             //then
             assertThrows(RuntimeException.class, () -> userService.editNickname(1L, "newNickname"));
