@@ -1,4 +1,4 @@
-version: '2'
+version: '3.8'
 
 services:
   zookeeper:
@@ -27,3 +27,48 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+  mysql:
+    image: mysql:latest
+    container_name: local-mysql
+    environment:
+      - MYSQL_DATABASE=lucky
+      - MYSQL_ROOT_PASSWORD=1234
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - ./docker-data/mysql_data:/data/db
+
+  redis:
+    image: redis:latest
+    container_name: redis-test-container
+    command: ["redis-server", "--requirepass", "pass"]
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - ./docker-data/redis_data:/data/db
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - ./docker-data/mongodb_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+      - "61613:61613" # STOMP
+    restart: unless-stopped
+#    environment:
+#      RABBITMQ_DEFAULT_USER: admin
+#      RABBITMQ_DEFAULT_PASS: admin
+    command: >
+      bash -c "rabbitmq-plugins enable rabbitmq_stomp && rabbitmq-server"
