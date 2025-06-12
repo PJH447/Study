@@ -45,12 +45,7 @@ public class KafkaProducerController {
         // Process the message asynchronously
         CompletableFuture<SendResult<String, String>> future = kafkaProducerService.sendMessage(message);
 
-        handleKafkaResult(
-                future,
-                deferredResult,
-                "Failed to send message: {}",
-                "Message sent successfully"
-        );
+        handleKafkaResult(future, deferredResult);
 
         return deferredResult;
     }
@@ -75,12 +70,7 @@ public class KafkaProducerController {
         // Process the message asynchronously
         CompletableFuture<SendResult<String, String>> future = kafkaProducerService.sendMessageToTopic(topic, message);
 
-        handleKafkaResult(
-                future,
-                deferredResult,
-                "Failed to send message to topic " + topic + ": {}",
-                "Message sent successfully to topic " + topic
-        );
+        handleKafkaResult(future, deferredResult);
 
         return deferredResult;
     }
@@ -108,18 +98,13 @@ public class KafkaProducerController {
      *
      * @param future            The CompletableFuture returned by the Kafka send operation
      * @param deferredResult    The DeferredResult to set with the operation result
-     * @param errorLogMessage   The message to log on error
-     * @param successLogMessage The message to log on success
      */
     private void handleKafkaResult(
             CompletableFuture<SendResult<String, String>> future,
-            DeferredResult<ResponseEntity<CommonResponse>> deferredResult,
-            String errorLogMessage,
-            String successLogMessage) {
+            DeferredResult<ResponseEntity<CommonResponse>> deferredResult
+            ) {
         future.whenComplete((result, ex) -> {
             if (ex != null) {
-                log.error(errorLogMessage, ex.getMessage(), ex);
-
                 String errorMsg;
                 if (ex.getCause() instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
@@ -131,8 +116,6 @@ public class KafkaProducerController {
                 CommonResponse errorResponse = CommonResponse.createErrorResponse(errorMsg);
                 deferredResult.setResult(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse));
             } else {
-                log.info(successLogMessage);
-
                 String resultInfo = String.format(
                         "topic: %s, partition: %d, offset: %d",
                         result.getRecordMetadata().topic(),
