@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Transactional(readOnly = true)
 @Service
@@ -25,27 +27,23 @@ public class CounselorServiceImpl implements CounselorService {
 
     @Override
     public CounselorDto findCounselor(final Long counselorId, final Long userId) {
-        Counselor counselor = counselorRepository.findByIdAndEnabledIsTrue(counselorId)
-                                                 .orElseThrow(() -> new ResultNotFoundException("상담사가 존재하지 않습니다"));
-
-        boolean isFavorite = userId != null && favoriteRepository.findByUserAndCounselor(userId, counselorId).isPresent();
-
+        Counselor counselor = findCounselorById(counselorId);
+        boolean isFavorite = userId != null && findFavorite(userId, counselorId).isPresent();
         return CounselorDto.of(counselor, isFavorite);
     }
 
     @Override
     @Transactional
     public void createFavorite(final Long userId, final Long counselorId) {
-
-        if (favoriteRepository.findByUserAndCounselor(userId, counselorId).isPresent()) {
+        Optional<Favorite> existingFavorite = findFavorite(userId, counselorId);
+        if (existingFavorite.isPresent()) {
             log.warn("이미 존재하는 favorite");
             return;
         }
 
         User user = userRepository.findById(userId)
-                                  .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
-        Counselor counselor = counselorRepository.findByIdAndEnabledIsTrue(counselorId)
-                                                 .orElseThrow(() -> new ResultNotFoundException("상담사가 존재하지 않습니다"));
+                                  .orElseThrow(() -> new ResultNotFoundException("유저가 존재하지 않습니다."));
+        Counselor counselor = findCounselorById(counselorId);
 
         Favorite favorite = Favorite.builder()
                                     .user(user)
@@ -57,12 +55,18 @@ public class CounselorServiceImpl implements CounselorService {
     @Override
     @Transactional
     public void deleteFavorite(final Long userId, final Long counselorId) {
-
-        Favorite favorite = favoriteRepository.findByUserAndCounselor(userId, counselorId)
-                                              .orElseThrow(() -> new ResultNotFoundException("[잘못된 요청]favorite 가 존재하지 않습니다."));
+        Favorite favorite = findFavorite(userId, counselorId)
+                .orElseThrow(() -> new ResultNotFoundException("favorite가 존재하지 않습니다."));
         favorite.disabled();
-
         favoriteRepository.save(favorite);
     }
 
+    private Counselor findCounselorById(final Long counselorId) {
+        return counselorRepository.findByIdAndEnabledIsTrue(counselorId)
+                                  .orElseThrow(() -> new ResultNotFoundException("상담사가 존재하지 않습니다"));
+    }
+
+    private Optional<Favorite> findFavorite(final Long userId, final Long counselorId) {
+        return favoriteRepository.findByUserAndCounselor(userId, counselorId);
+    }
 }
