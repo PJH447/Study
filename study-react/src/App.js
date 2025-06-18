@@ -1,7 +1,7 @@
 import './App.css';
 import ClassA from "./pages/ClassA";
 import DisplayComponent from "./DisplayComponent";
-import {BrowserRouter as Router, Link, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Navigation from "./component/Navigation";
@@ -16,11 +16,11 @@ function App() {
                 <Header/>
                 <section className="App-section">
                     <Routes>
-                        <Route path='/hi' element={<ClassA/>}/>
-                        <Route path='/hi2' element={<DisplayComponent/>}/>
+                        <Route path='/class-example' element={<ClassA/>}/>
+                        <Route path='/display-example' element={<DisplayComponent/>}/>
                         <Route path='/login' element={<Login/>}/>
                         <Route path='/signUp' element={<SignUp/>}/>
-                        <Route path='/chat-test' element={<Chat/>}/>
+                        <Route path='/chat' element={<Chat/>}/>
                         <Route path='/chat-list' element={<ChatList/>}/>
                     </Routes>
                 </section>

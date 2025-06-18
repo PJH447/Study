@@ -30,7 +30,7 @@ public class KafkaConsumerService {
      */
     @KafkaListener(topics = "${spring.kafka.topic.name:my-topic}",
             groupId = "${spring.kafka.consumer-groups.first:group-id-temp}")
-    public void consume(String message) {
+    public void consumeWithFirstGroup(String message) {
         processMessage(message, 1, firstGroupId);
     }
 
@@ -41,7 +41,7 @@ public class KafkaConsumerService {
      */
     @KafkaListener(topics = "${spring.kafka.topic.name:my-topic}",
             groupId = "${spring.kafka.consumer-groups.second:group-id-temp-2}")
-    public void consume2(String message) {
+    public void consumeWithSecondGroup(String message) {
         processMessage(message, 2, secondGroupId);
     }
 

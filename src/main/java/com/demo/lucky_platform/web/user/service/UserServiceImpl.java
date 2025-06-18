@@ -9,6 +9,7 @@ import com.demo.lucky_platform.web.user.domain.Role;
 import com.demo.lucky_platform.web.user.domain.User;
 import com.demo.lucky_platform.web.user.dto.EditPasswordForm;
 import com.demo.lucky_platform.web.user.dto.HeaderInfoDto;
+import com.demo.lucky_platform.web.user.dto.PhoneCertificationResult;
 import com.demo.lucky_platform.web.user.dto.SignUpForm;
 import com.demo.lucky_platform.web.user.repository.PhoneCertificationRepository;
 import com.demo.lucky_platform.web.user.repository.RoleRepository;
@@ -40,6 +41,12 @@ public class UserServiceImpl implements UserService {
     private final PhoneCertificationRepository phoneCertificationRepository;
     private final IamportClient iamportClient;
 
+    /**
+     * 제공된 회원가입 정보로 새 사용자를 등록합니다.
+     *
+     * @param signUpForm 사용자 정보가 포함된 회원가입 양식
+     * @throws DuplicateUserException 동일한 전화번호를 가진 사용자가 이미 존재하는 경우
+     */
     @Transactional
     @Override
     public void signUp(final SignUpForm signUpForm) {
@@ -54,9 +61,9 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByAuthority("USER");
         user.initRole(role);
 
-        User _user = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        this.phoneCertificate(_user, signUpForm.impUid());
+        this.phoneCertificate(savedUser, signUpForm.impUid());
     }
 
     /**
@@ -100,7 +107,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.editPassword(bCryptPasswordEncoder.encode(editPasswordForm.newPassword()));
-
         userRepository.save(user);
     }
 
@@ -126,20 +132,34 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmailAndEnabledIsTrue(email).isPresent();
     }
 
+    /**
+     * 사용자의 헤더 정보를 검색합니다.
+     *
+     * @param userId 사용자의 ID
+     * @return 사용자의 헤더 정보가 포함된 DTO
+     * @throws UserNotFoundException 사용자를 찾을 수 없는 경우
+     */
     @Override
-    public HeaderInfoDto findHeaderInfo(Long userId) {
-        User user = userRepository.findById(userId)
-                                  .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
+    public HeaderInfoDto findHeaderInfo(final Long userId) {
+        User user = getUser(userId);
         return HeaderInfoDto.from(user);
     }
 
-    private Map<String, String> phoneCertificate(final User user, final String impUid) {
+    /**
+     * Iamport 서비스를 사용하여 사용자의 전화번호를 인증합니다.
+     *
+     * @param user   인증할 사용자
+     * @param impUid 인증을 위한 Iamport UID
+     * @return 인증된 전화번호와 Iamport UID가 포함된 PhoneCertificationResult
+     * @throws DuplicateUserException 동일한 전화번호를 가진 사용자가 이미 존재하는 경우
+     * @throws PhoneCertificationException 인증이 실패한 경우
+     */
+    private PhoneCertificationResult phoneCertificate(final User user, final String impUid) {
         try {
             IamportResponse<Certification> iamportResponse = iamportClient.certificationByImpUid(impUid);
             Certification certification = iamportResponse.getResponse();
 
             if (impUid.equals(certification.getImpUid())) {
-
                 String uniqueKey = certification.getUniqueKey();
                 Optional<PhoneCertification> phoneCertificationOptional = phoneCertificationRepository.findByUniqueKeyAndEnabledIsTrue(uniqueKey);
                 if (phoneCertificationOptional.isPresent()) {
@@ -149,16 +169,12 @@ public class UserServiceImpl implements UserService {
                 PhoneCertification phoneCertification = PhoneCertification.create(user, certification);
                 phoneCertificationRepository.save(phoneCertification);
 
-                HashMap<String, String> result = new HashMap<>();
-                result.put("phone", certification.getPhone());
-                result.put("impUid", certification.getImpUid());
-
-                return result;
+                return PhoneCertificationResult.of(certification.getPhone(), certification.getImpUid());
             }
 
             throw new PhoneCertificationException("해당 본인인증 내역이 존재하지 않습니다.");
         } catch (IamportResponseException e) {
-            log.error(e.getMessage());
+            log.error("Phone certification failed: {}", e.getMessage());
 
             switch (e.getHttpStatusCode()) {
                 case 401:
@@ -171,12 +187,19 @@ public class UserServiceImpl implements UserService {
                     throw new PhoneCertificationException("오류가 발생했습니다.", e);
             }
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Phone certification failed due to IO error: {}", e.getMessage());
             throw new PhoneCertificationException("오류가 발생했습니다.", e);
         }
     }
 
-    private User getUser(Long userId) {
+    /**
+     * ID로 사용자를 검색합니다.
+     *
+     * @param userId 검색할 사용자의 ID
+     * @return 사용자
+     * @throws UserNotFoundException 사용자를 찾을 수 없는 경우
+     */
+    private User getUser(final Long userId) {
         return userRepository.findById(userId)
                              .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다. ID: " + userId));
     }
