@@ -45,12 +45,12 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
-     * Authenticates a user and issues JWT tokens.
+     * 사용자를 인증하고 JWT 토큰을 발급합니다.
      *
-     * @param loginForm the login form containing email and password
-     * @param response  the HTTP response to set cookies
-     * @throws ResultNotFoundException if the user is not found
-     * @throws AuthenticationException if the password is incorrect
+     * @param loginForm 이메일과 비밀번호가 포함된 로그인 양식
+     * @param response  쿠키를 설정하기 위한 HTTP 응답
+     * @throws ResultNotFoundException 사용자를 찾을 수 없는 경우
+     * @throws AuthenticationException 비밀번호가 올바르지 않은 경우
      */
     @Override
     public void login(final LoginForm loginForm, final HttpServletResponse response) {
@@ -66,12 +66,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * Reissues access token using refresh token.
+     * 리프레시 토큰을 사용하여 액세스 토큰을 재발급합니다.
      *
-     * @param request  the HTTP request containing the refresh token cookie
-     * @param response the HTTP response to set new cookies
-     * @throws NotFoundRefreshTokenException if the refresh token is not found or invalid
-     * @throws ResultNotFoundException       if the user is not found
+     * @param request  리프레시 토큰 쿠키가 포함된 HTTP 요청
+     * @param response 새 쿠키를 설정하기 위한 HTTP 응답
+     * @throws NotFoundRefreshTokenException 리프레시 토큰을 찾을 수 없거나 유효하지 않은 경우
+     * @throws ResultNotFoundException       사용자를 찾을 수 없는 경우
      */
     @Override
     public void reissueAccessToken(final HttpServletRequest request, final HttpServletResponse response) {
@@ -92,10 +92,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * Logs out a user by deleting tokens and cookies.
+     * 토큰과 쿠키를 삭제하여 사용자를 로그아웃합니다.
      *
-     * @param request  the HTTP request containing the refresh token cookie
-     * @param response the HTTP response to delete cookies
+     * @param request  리프레시 토큰 쿠키가 포함된 HTTP 요청
+     * @param response 쿠키를 삭제하기 위한 HTTP 응답
      */
     @Override
     public void logout(final HttpServletRequest request, final HttpServletResponse response) {
@@ -145,12 +145,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * Creates a cookie with the given name, value, and expiration time.
+     * 주어진 이름, 값, 만료 시간으로 쿠키를 생성합니다.
      *
-     * @param name     the cookie name
-     * @param value    the cookie value (null for deletion)
-     * @param maxAge   the cookie max age in milliseconds (0 for deletion)
-     * @param response the HTTP response to add the cookie to
+     * @param name     쿠키 이름
+     * @param value    쿠키 값 (삭제 시 null)
+     * @param maxAge   쿠키 최대 수명(밀리초) (삭제 시 0)
+     * @param response 쿠키를 추가할 HTTP 응답
      */
     private void setCookie(final String name, final String value, final long maxAge, final HttpServletResponse response) {
         ResponseCookie responseCookie = ResponseCookie.from(name, value)
@@ -164,38 +164,38 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * Sets the access token cookie.
+     * 액세스 토큰 쿠키를 설정합니다.
      *
-     * @param accessToken the access token value
-     * @param response    the HTTP response to add the cookie to
+     * @param accessToken 액세스 토큰 값
+     * @param response    쿠키를 추가할 HTTP 응답
      */
     private void setAccessToken(final String accessToken, final HttpServletResponse response) {
         setCookie(ACCESS_TOKEN_COOKIE_KEY, accessToken, jwtAccessExpirationDateMs, response);
     }
 
     /**
-     * Deletes the access token cookie.
+     * 액세스 토큰 쿠키를 삭제합니다.
      *
-     * @param response the HTTP response to add the cookie to
+     * @param response 쿠키를 추가할 HTTP 응답
      */
     private void deleteAccessToken(final HttpServletResponse response) {
         setCookie(ACCESS_TOKEN_COOKIE_KEY, null, 0, response);
     }
 
     /**
-     * Sets the refresh token cookie.
+     * 리프레시 토큰 쿠키를 설정합니다.
      *
-     * @param refreshToken the refresh token value
-     * @param response     the HTTP response to add the cookie to
+     * @param refreshToken 리프레시 토큰 값
+     * @param response     쿠키를 추가할 HTTP 응답
      */
     private void setRefreshToken(final String refreshToken, final HttpServletResponse response) {
         setCookie(REFRESH_TOKEN_COOKIE_KEY, refreshToken, jwtRefreshExpirationDateMs, response);
     }
 
     /**
-     * Deletes the refresh token cookie.
+     * 리프레시 토큰 쿠키를 삭제합니다.
      *
-     * @param response the HTTP response to add the cookie to
+     * @param response 쿠키를 추가할 HTTP 응답
      */
     private void deleteRefreshToken(final HttpServletResponse response) {
         setCookie(REFRESH_TOKEN_COOKIE_KEY, null, 0, response);

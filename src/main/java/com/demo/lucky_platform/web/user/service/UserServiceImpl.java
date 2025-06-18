@@ -59,6 +59,14 @@ public class UserServiceImpl implements UserService {
         this.phoneCertificate(_user, signUpForm.impUid());
     }
 
+    /**
+     * 사용자의 닉네임을 업데이트합니다.
+     *
+     * @param userId   업데이트할 사용자의 ID
+     * @param nickname 새 닉네임
+     * @throws DuplicateUserException 동일한 닉네임을 가진 사용자가 이미 존재하는 경우
+     * @throws UserNotFoundException 사용자를 찾을 수 없는 경우
+     */
     @Transactional
     @Override
     public void editNickname(final Long userId, final String nickname) {
@@ -72,6 +80,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    /**
+     * 현재 비밀번호를 확인한 후 사용자의 비밀번호를 업데이트합니다.
+     *
+     * @param userId          업데이트할 사용자의 ID
+     * @param editPasswordForm 현재 비밀번호와 새 비밀번호가 포함된 양식
+     * @throws InvalidPasswordException 현재 비밀번호가 올바르지 않은 경우
+     * @throws UserNotFoundException 사용자를 찾을 수 없는 경우
+     */
     @Transactional
     @Override
     public void editPassword(final Long userId, final EditPasswordForm editPasswordForm) {
@@ -88,11 +104,23 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    /**
+     * 주어진 닉네임을 가진 사용자가 이미 존재하는지 확인합니다.
+     *
+     * @param nickname 확인할 닉네임
+     * @return 동일한 닉네임을 가진 사용자가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existSameNickname(final String nickname) {
         return userRepository.findByNicknameAndEnabledIsTrue(nickname).isPresent();
     }
 
+    /**
+     * 주어진 이메일을 가진 사용자가 이미 존재하는지 확인합니다.
+     *
+     * @param email 확인할 이메일
+     * @return 동일한 이메일을 가진 사용자가 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existSameEmail(final String email) {
         return userRepository.findByEmailAndEnabledIsTrue(email).isPresent();
