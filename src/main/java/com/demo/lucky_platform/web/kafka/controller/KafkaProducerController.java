@@ -16,9 +16,9 @@ import org.springframework.web.context.request.async.DeferredResult;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * REST controller for Kafka producer operations.
- * This controller provides endpoints for sending messages to Kafka topics
- * using non-blocking asynchronous processing.
+ * Kafka 프로듀서 작업을 위한 REST 컨트롤러.
+ * 이 컨트롤러는 논블로킹 비동기 처리를 사용하여 Kafka 토픽에
+ * 메시지를 보내기 위한 엔드포인트를 제공합니다.
  */
 @Slf4j
 @RestController
@@ -30,10 +30,10 @@ public class KafkaProducerController {
     private static final long RESPONSE_TIMEOUT = 10000L; // 10 seconds
 
     /**
-     * Sends a message to Kafka asynchronously.
+     * 비동기적으로 Kafka에 메시지를 전송합니다.
      *
-     * @param message The message to send
-     * @return DeferredResult containing ResponseEntity with CommonResponse that includes operation status
+     * @param message 전송할 메시지
+     * @return 작업 상태를 포함하는 CommonResponse와 ResponseEntity를 담고 있는 DeferredResult
      */
     @PostMapping("/sendMessage")
     public DeferredResult<ResponseEntity<CommonResponse>> sendMessage(@RequestParam("message") String message) {
@@ -51,11 +51,11 @@ public class KafkaProducerController {
     }
 
     /**
-     * Sends a message to a specific Kafka topic asynchronously.
+     * 비동기적으로 특정 Kafka 토픽에 메시지를 전송합니다.
      *
-     * @param topic   The topic to send the message to
-     * @param message The message to send
-     * @return DeferredResult containing ResponseEntity with CommonResponse that includes operation status
+     * @param topic   메시지를 전송할 토픽
+     * @param message 전송할 메시지
+     * @return 작업 상태를 포함하는 CommonResponse와 ResponseEntity를 담고 있는 DeferredResult
      */
     @PostMapping("/sendMessageToTopic")
     public DeferredResult<ResponseEntity<CommonResponse>> sendMessageToTopic(
@@ -76,10 +76,10 @@ public class KafkaProducerController {
     }
 
     /**
-     * Creates a DeferredResult with timeout handling.
+     * 타임아웃 처리가 포함된 DeferredResult를 생성합니다.
      *
-     * @param timeoutMessage The message to log on timeout
-     * @return A configured DeferredResult
+     * @param timeoutMessage 타임아웃 시 로깅할 메시지
+     * @return 구성된 DeferredResult
      */
     private DeferredResult<ResponseEntity<CommonResponse>> createDeferredTimeoutResult(String timeoutMessage) {
         DeferredResult<ResponseEntity<CommonResponse>> deferredResult = new DeferredResult<>(RESPONSE_TIMEOUT);
@@ -94,10 +94,10 @@ public class KafkaProducerController {
     }
 
     /**
-     * Handles the completion of a Kafka send operation.
+     * Kafka 전송 작업의 완료를 처리합니다.
      *
-     * @param future            The CompletableFuture returned by the Kafka send operation
-     * @param deferredResult    The DeferredResult to set with the operation result
+     * @param future            Kafka 전송 작업에서 반환된 CompletableFuture
+     * @param deferredResult    작업 결과로 설정할 DeferredResult
      */
     private void handleKafkaResult(
             CompletableFuture<SendResult<String, String>> future,

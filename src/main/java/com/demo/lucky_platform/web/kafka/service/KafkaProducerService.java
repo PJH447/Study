@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Service for producing messages to Kafka topics.
- * This service provides methods to send messages to configured Kafka topics
- * and handles success and error logging.
+ * Kafka 토픽에 메시지를 생성하는 서비스.
+ * 이 서비스는 구성된 Kafka 토픽에 메시지를 보내는 메서드를 제공하고
+ * 성공 및 오류 로깅을 처리합니다.
  */
 @Slf4j
 @Service
@@ -25,10 +25,10 @@ public class KafkaProducerService {
     private String topicName;
 
     /**
-     * Sends a message to the configured Kafka topic.
+     * 구성된 Kafka 토픽에 메시지를 전송합니다.
      *
-     * @param message The message to send
-     * @return CompletableFuture containing the result of the send operation
+     * @param message 전송할 메시지
+     * @return 전송 작업의 결과를 포함하는 CompletableFuture
      */
     public CompletableFuture<SendResult<String, String>> sendMessage(String message) {
         log.info("Sending message to topic {}: {}", topicName, message);
@@ -36,11 +36,11 @@ public class KafkaProducerService {
     }
 
     /**
-     * Sends a message to a specific Kafka topic.
+     * 특정 Kafka 토픽에 메시지를 전송합니다.
      *
-     * @param topic   The topic to send the message to
-     * @param message The message to send
-     * @return CompletableFuture containing the result of the send operation
+     * @param topic   메시지를 전송할 토픽
+     * @param message 전송할 메시지
+     * @return 전송 작업의 결과를 포함하는 CompletableFuture
      */
     public CompletableFuture<SendResult<String, String>> sendMessageToTopic(String topic, String message) {
         log.info("Sending message to specific topic {}: {}", topic, message);
@@ -48,12 +48,12 @@ public class KafkaProducerService {
     }
 
     /**
-     * Internal helper method to send a message to a Kafka topic and handle the result.
+     * Kafka 토픽에 메시지를 전송하고 결과를 처리하는 내부 헬퍼 메서드입니다.
      *
-     * @param topic        The topic to send the message to
-     * @param message      The message to send
-     * @param errorMessage The error message template to use if sending fails
-     * @return CompletableFuture containing the result of the send operation
+     * @param topic        메시지를 전송할 토픽
+     * @param message      전송할 메시지
+     * @param errorMessage 전송 실패 시 사용할 오류 메시지 템플릿
+     * @return 전송 작업의 결과를 포함하는 CompletableFuture
      */
     private CompletableFuture<SendResult<String, String>> sendMessageInternal(String topic, String message, String errorMessage) {
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, message);
