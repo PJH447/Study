@@ -3,6 +3,7 @@ package com.demo.lucky_platform.web_nosql.redis.repository;
 /**
  * Redis key-value repository interface
  * Provides methods for basic CRUD operations on Redis
+ * Supports both String values and serialized objects
  */
 public interface RedisRepository {
     
@@ -55,4 +56,32 @@ public interface RedisRepository {
      * @return true if the expiration was set, false otherwise
      */
     boolean expire(String key, long expirationInSeconds);
+
+    /**
+     * Store an object with the given key
+     * The object will be serialized using JSON
+     * 
+     * @param key the key
+     * @param value the object to store
+     */
+    void setObject(String key, Object value);
+
+    /**
+     * Store an object with the given key and expiration time
+     * The object will be serialized using JSON
+     * 
+     * @param key the key
+     * @param value the object to store
+     * @param expirationInSeconds expiration time in seconds
+     */
+    void setObject(String key, Object value, long expirationInSeconds);
+
+    /**
+     * Get the object for the given key
+     * 
+     * @param key the key
+     * @param classType the class type of the object
+     * @return the deserialized object, or null if the key does not exist
+     */
+    <T> T getObject(String key, Class<T> classType);
 }
